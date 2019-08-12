@@ -267,6 +267,24 @@ public class MyBatisConfig {
 }
 ```
 
+OR
+
+```yaml
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+```
+
+OR
+
+```properties
+ mybatis.configuration.mapUnderscoreToCamelCase=true
+```
+
+
+
+
+
 ## 通过 @MapperScan 替换 @Mapper
 
 每一个mapper 类都加@Mapper 太麻烦。
