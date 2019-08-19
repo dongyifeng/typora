@@ -214,6 +214,17 @@ public interface SearchSuggMapper {
 
 如果Bean 中字段名和数据表中字段名不一致，数据不能自动赋值。
 
+
+
+**注意：要字符串拼接SQL，使用${}** 
+
+```java
+ @Select("select * from search_status_index where ${sql}")
+    List<StatusIndexEntity> findBySql(@Param("sql") String sql);
+```
+
+
+
 ### Controller
 
 ```java
@@ -242,7 +253,7 @@ public class SearchSuggestController {
 
 ## 扩展
 
-## 自定义MyBatis 规则
+### 下划线装驼峰
 
 ```java
 import org.apache.ibatis.session.Configuration;
@@ -280,6 +291,23 @@ OR
 ```properties
  mybatis.configuration.mapUnderscoreToCamelCase=true
 ```
+
+### 打印 mysql 日志
+
+```properties
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+```
+
+org.apache.ibatis.logging.stdout.StdOutImpl
+
+sql 和执行结果都会打印。
+
+log-impl 的其他选择：
+
+
 
 
 

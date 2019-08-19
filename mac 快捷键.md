@@ -1,0 +1,1 @@
+Command+Shift+i  ： iterm2 多个窗口同时操作
