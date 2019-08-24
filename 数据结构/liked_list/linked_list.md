@@ -2,13 +2,13 @@
 
 # 背景
 
-数组新增和删除时O(n)，不支持动态扩容。
+数组新增和删除时 O(n) ，不支持动态扩容。
 
 所以开发了链表。
 
 
 
-![](image/QQ20190709-200248@2x.jpg)
+![](../image/QQ20190709-200248@2x.jpg)
 
 链表通过指针将一组==零散的内存块==串联起来。
 
@@ -22,13 +22,89 @@
 
 尾节点：最后一个节点。
 
+```python
+class ListNode(object):
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+```
+
 ## 插入和删除
 
 ![插入和删除](image/QQ20190709-200824@2x.jpg)
 
+```python
+'''
+在 position 之后添加 x
+'''
+def insertNode(head, position, xNode):
+    node = head
+    while node:
+        if node.val == position:
+          	# node.val = b
+            # x next 指向 c 节点
+            xNode.next = node.next
+            # b 节点 next 指向 x 节点
+            node.next = xNode
+            break
+        else:
+            node = node.next
+    return head
+  
+'''
+在 position 之前添加 x
+'''
+def insertNode2(head, position, xNode):
+    dump = ListNode(None)
+    dump.next = head
+    node = dump
+
+    while node and node.next:
+        if node.next.val == position:
+            xNode.next = node.next
+            node.next = xNode
+            break
+        else:
+            node = node.next
+    return dump.next
+
+'''
+ 删除 x ，涉及到 x 的父节点，x 节点，x 的子节点。
+ 如果删除是第一个节点，需要特殊判断，通过 dump 避免这种判断。
+ note.next 中 next 是 图中的箭头，不是一下节点。
+''' 
+def deleteNode(head, x):
+    dump = ListNode(None)
+    dump.next = head
+
+    while dump and dump.next:
+        if dump.next.val == x:
+            dump.next = dump.next.next
+            break
+        else:
+            dump = dump.next
+	    return head
+```
+
+
+
+
+
 ## 随机访问第 k 个元素
 
-由于链式是非连续存储，不能通过寻址公式直接计算出对应的内存地址。所以需要从头节点遍历查找节点k，时间复杂度为O(n)。
+由于链式是非连续存储，不能通过寻址公式直接计算出对应的内存地址。所以需要从头节点遍历查找节点 k，时间复杂度为O(n)。
+
+```python
+def find(head, k):
+    node = head
+    while node:
+        if node.val == k:
+            return node
+        else:
+            node = node.next
+    return
+```
 
 
 

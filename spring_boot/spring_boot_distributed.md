@@ -7,7 +7,7 @@
 
 分布式服务的框架图：
 
-![](/Users/dongyifeng/doc/spring_boot/images/WX20190720-065819.png)
+![](images/WX20190720-065819.png)
 
 ## 方案一：dubbo 和 zookeeper
 
