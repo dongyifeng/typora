@@ -1,94 +1,164 @@
 [TOC]
 
-# stack 实现
+# stack 概念
 
-## python heapq 模块
+**后进者先出，先进者后出**
 
-### 常用方法
+![](../image/20190831163137.jpg)
 
-- heap = [] #创建了一个空堆 
-- heappush(heap,item) #往堆中插入一条新的值 
-- item = heappop(heap) #从堆中弹出最小值 
-- item = heap[0] #查看堆中最小值，不弹出 
-- heapify(x) #以线性时间讲一个列表转化为堆 
-- heapreplace(heap, x)：将堆中最小元素弹出，并将元素x 入堆
-- heappushpop(heap, item)：将item 入堆，然后弹出并返回堆中最小的元素。
-- nlargest(n, iterable, key=None)：返回堆中最大的 n 个元素。
-- nsmallest(n, iterable, key=None)：返回堆中最小的 n 个元素。
+
+
+顺序栈：用数组实现
+
+java 版
+
+```java
+// 基于数组实现的顺序栈
+public class ArrayStack {
+  private String[] items;  // 数组
+  private int count;       // 栈中元素个数
+  private int n;           // 栈的大小
+
+  // 初始化数组，申请一个大小为 n 的数组空间
+  public ArrayStack(int n) {
+    this.items = new String[n];
+    this.n = n;
+    this.count = 0;
+  }
+
+  // 入栈操作
+  public boolean push(String item) {
+    // 数组空间不够了，直接返回 false，入栈失败。
+    if (count == n) return false;
+    // 将 item 放到下标为 count 的位置，并且 count 加一
+    items[count] = item;
+    ++count;
+    return true;
+  }
+  
+  // 出栈操作
+  public String pop() {
+    // 栈为空，则直接返回 null
+    if (count == 0) return null;
+    // 返回下标为 count-1 的数组元素，并且栈中元素个数 count 减一
+    String tmp = items[count-1];
+    --count;
+    return tmp;
+  }
+}
+
+```
+
+python 版
 
 ```python
-import heapq
+class ArrayStack(object):
+    def __init__(self):
+        self.items = []
 
-heap = [(3,"c"),(1,"a"),(2,"b"),(6,"f"),(5,"e")]
-# 构建最小堆
-heapq.heapify(heap)
-# 或者
-for n,s in heap:
-  heapq.heappush(heap, (n,s))
+    def is_empty(self):
+        return len(self.items) == 0
 
-# 从堆中弹出最小值
-heapq.heappop(heap)
+    # 返回栈顶元素
+    def peek(self):
+        return self.items[-1]
 
-# 堆排序
-def heapsort(iterable):
-    h = []
-    for value in iterable:
-        heapq.heappush(h,value) #[0, 1, 2, 6, 3, 5, 4, 7, 8, 9]
-    return [heapq.heappop(h) for i in range(len(h))]
+    def size(self):
+        return len(self.items)
 
-def HeapSort(list):
-    # 将 list 构建成堆
-    heapq.heapify(list)
-    heap = []
-    while list:
-        heap.append(heapq.heappop(lists))
-    list[:] = heap
-    return list
+    def push(self, item):
+        self.items.append(item)
 
+    def pop(self):
+        return self.items.pop()
+
+    def size(self):
+        return len(self.items)
 ```
 
 
 
+链式栈：用链表实现
 
 
-## python PriorityQueue 模块
 
-PriorityQueue 使用的就是 heapq 来实现的，所以可以认为两者算法本质上是一样的。当然PriorityQueue考虑到了线程安全的问题。 
 
-### 常用方法
+
+# 单调栈
+
+## 单调递增栈
+
+从栈顶到栈底的元素是严格递增的
 
 ```python
-from Queue import PriorityQueue
-q = PriorityQueue()
-# 向队列中添加元素
-# 默认：block=True, timeout=None：阻塞调用，无超时
-# block=True, timeout > 0 : 阻塞调用进程最多timeout秒,如果一直无空空间可用，抛出Full异常
-# block=False, 如果有空闲空间可用将数据放入队列，否则立即抛出Full异常。
-q.put(item[,block[,timeout]])
-# 从队列中获取元素
-q.get([block[,timeout]])
-# 队列判空
-q.empty()
-# 队列大小
-q.qsize()
+class Stack(object):
+    def __init__(self):
+        self.items = []
 
+    def is_empty(self):
+        return len(self.items) == 0
+
+    # 返回栈顶元素
+    def peek(self):
+        return self.items[-1]
+
+    def push(self, item):
+        while not self.is_empty() and self.peek() < item:
+            self.pop()
+        self.items.append(item)
+
+    def pop(self):
+        self.items.pop()
 ```
 
 
 
+```python
+'''
+给定数据 A = [5,3,7,4],返回数组L，L[i] 表示：第i个数向左遍历的第一个比它小的元素的位置
+A = [ 5,3,7,4 ]
+L : [ 0,0,2,2 ]
+'''
 
+def run(a):
+    l = [0 for i in range(len(a))]
+    stack = Stack()
+    for i in range(len((a))):
+        # 找到 stack 顶元素比 a[i] 小的第一个元素
+        while not stack.is_empty() and a[stack.peek()] >= a[i]:
+            stack.pop()
+        # 如果不为空，栈顶元素就是，a[i] 左边第一个比它小的元素的位置
+        if not stack.is_empty():
+            l[i] = stack.peek() + 1
+        # 由于 a[stack.peek()] < a[i] ,此处 push 保持了单调递增的性质
+        stack.push(i)
+    return l
+```
+
+总结：一个元素向左遍历的第一个比它小的数的位置就是：==将它插入单调栈时栈顶元素的值==，若栈为空，则说明不存在这么一个数。然后将此元素的下标存入栈，就能类似迭代般地求解后面的元素
+
+## 单调递减栈
+
+从栈顶到栈底的元素是严格递减的
 
 ```python
-from Queue import PriorityQueue
+class Stack(object):
+    def __init__(self):
+        self.items = []
 
-q = PriorityQueue()
-q.put(1)
-q.put(5)
-q.put(4)
-q.put(3)
+    def is_empty(self):
+        return len(self.items) == 0
 
-while True:
-    print q.get()
-    q.task_done()
+    # 返回栈顶元素
+    def peek(self):
+        return self.items[-1]
+
+    def push(self, item):
+        while not self.is_empty() and self.peek() > item:
+            self.pop()
+        self.items.append(item)
+
+    def pop(self):
+        self.items.pop()
 ```
 

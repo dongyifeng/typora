@@ -115,7 +115,7 @@ cron 表达式：秒 分 时 日 月 周几
 
 # 邮件任务
 
-![邮件发送图](/Users/dongyifeng/doc/spring_boot/images/QQ20190623-112647@2x.jpg)
+![邮件发送图](images/QQ20190623-112647@2x.jpg)
 
 步骤：
 

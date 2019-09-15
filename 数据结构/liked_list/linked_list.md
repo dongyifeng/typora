@@ -16,7 +16,7 @@
 
 # 单链表
 
-![单链表](image/QQ20190709-200506@2x.jpg)
+![单链表](../image/QQ20190709-200506@2x.jpg)
 
 头结点：第一个节点
 
@@ -32,7 +32,7 @@ class ListNode(object):
 
 ## 插入和删除
 
-![插入和删除](image/QQ20190709-200824@2x.jpg)
+![插入和删除](../image/QQ20190709-200824@2x.jpg)
 
 ```python
 '''
@@ -112,7 +112,7 @@ def find(head, k):
 
 # 循环链表
 
-![循环链表结构](image/QQ20190709-201521@2x.jpg)
+![循环链表结构](../image/QQ20190709-201521@2x.jpg)
 
 循环链表是一种特殊的单链表。
 
@@ -124,7 +124,7 @@ def find(head, k):
 
 # 双向链表
 
-![双向链表结构](image/QQ20190709-201608@2x.jpg)
+![双向链表结构](../image/QQ20190709-201608@2x.jpg)
 
 优点：找前驱节点的时间复杂度是O(1)，在某些情况下，插入，删除等操作比单链表简单，高效。
 
@@ -155,11 +155,21 @@ def find(head, k):
 
 ==空间换时间==的设计思想。
 
+```python
+class Node(object):
+    def __init__(self, val, prev, next):
+        self.val = val
+        self.prev = prev
+        self.next = next
+```
+
+
+
 
 
 # 双向循环链表
 
-![双向循环链表结构](image/QQ20190709-201718@2x.jpg)
+![双向循环链表结构](../image/QQ20190709-201718@2x.jpg)
 
 # 链表 VS 数组性能
 

@@ -9,6 +9,9 @@ alter table search_task_log drop column source;
 
 # 修改列名
 alter table search_task_log change iterm_id item_id varchar(128) DEFAULT '' COMMENT '处理主体标识';
+
+# 修改列类型
+
 ```
 
 
