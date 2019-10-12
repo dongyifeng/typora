@@ -153,6 +153,13 @@ persons.stream().sorted((p1, p2) ->
         ).forEach(System.out::println);
 ```
 
+Map 排序
+
+```java
+map.entrySet().stream().sorted((o1, o2) -> (int) (o2.getValue() - o1.getValue()))
+                .collect(Collectors.toList())
+```
+
 
 
 # 终止操作

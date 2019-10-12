@@ -48,8 +48,7 @@ def insertNode(head, position, xNode):
             # b 节点 next 指向 x 节点
             node.next = xNode
             break
-        else:
-            node = node.next
+        node = node.next
     return head
   
 '''
@@ -64,9 +63,8 @@ def insertNode2(head, position, xNode):
         if node.next.val == position:
             xNode.next = node.next
             node.next = xNode
-            break
-        else:
-            node = node.next
+            break 
+        node = node.next
     return dump.next
 
 '''
@@ -82,14 +80,9 @@ def deleteNode(head, x):
         if dump.next.val == x:
             dump.next = dump.next.next
             break
-        else:
-            dump = dump.next
+        dump = dump.next
 	    return head
 ```
-
-
-
-
 
 
 
@@ -98,13 +91,21 @@ def deleteNode(head, x):
 由于链式是非连续存储，不能通过寻址公式直接计算出对应的内存地址。所以需要从头节点遍历查找节点 k，时间复杂度为 ==O(n)==。
 
 ```python
-def find(head, k):
+def find(head,k):
+  	node = head
+    i = 0
+    while node:
+      	if i == k:
+          return node
+        i += 1
+        node = node.next
+
+def find(head, target):
     node = head
     while node:
-        if node.val == k:
+        if node.val == target:
             return node
-        else:
-            node = node.next
+        node = node.next
     return
 ```
 
@@ -147,7 +148,7 @@ def find(head, k):
 
 
 
-对于有序链表，双向链表更高效。因为，可以记录上次查找位置p，每次查询时，根据要查找的值 与 p 的大小关系，决定是往前还是往后查找，所以平均只需要查找一半的数据。
+对于有序链表，双向链表更高效。因为，可以记录上次查找位置 p，每次查询时，根据要查找的值 与 p 的大小关系，决定是往前还是往后查找，所以平均只需要查找一半的数据。 
 
 
 
@@ -252,11 +253,9 @@ if not p.next:
 
 **链表的插入和删除操作，需要针对头结点和尾结点进行特殊处理。**
 
-引入哨兵元素：解决边界问题。
+==引入哨兵元素：解决边界问题==。
 
 有人将这种有哨兵结点的链表叫：**带头链表**。没有哨兵的链表叫作**不带头链表**。
-
-
 
 ```python
 def deleteNode(head, x):

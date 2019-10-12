@@ -153,7 +153,7 @@ Exchange 根据消息的路由键（key），决定消息分发给哪个队列�
 
 消息中的路由键(routing key)如果和 Binding 中的 binding key 一致, 交换器就将消息发到对应的队列中。
 
-![direct exchange 图片](/Users/dongyifeng/doc/spring_boot/images/WX20190622-214158@2x.png)
+![direct exchange 图片](images/WX20190622-214158@2x.png)
 
 
 
@@ -163,7 +163,7 @@ fanout 交换器不处理路由键, 只是简单的将队列绑定到交换器�
 
 发送速度最快。
 
-![fanout exchange 图片](/Users/dongyifeng/doc/spring_boot/images/WX20190622-214459@2x.png)
+![fanout exchange 图片](images/WX20190622-214459@2x.png)
 
 ## Topic Exchange
 
@@ -172,7 +172,7 @@ topic 交换器通过==模式匹配分配==消息的路由键属性,将路由键
 - “#”：匹配 0 个或者多个单词。
 - “*”： 匹配一个单词。
 
-![topic exchange 图片](/Users/dongyifeng/doc/spring_boot/images/WX20190622-214728@2x.png)
+![topic exchange 图片](images/WX20190622-214728@2x.png)
 
 
 

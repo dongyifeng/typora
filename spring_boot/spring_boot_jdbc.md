@@ -1,6 +1,6 @@
 对于数据访问层，无论是SQL还是 NoSQL，Spring Boot 默认采用整合 ==Spring Data== 的方式进行统一处理，添加了大量的自动配置，屏蔽了很多设置。引入各种 xxxTemplate 和 xxxRepository 简化我们对数据访问层的操作。
 
-![spring boot图片](/Users/dongyifeng/doc/spring_boot/images/QQ20190623-140710@2x.jpg)
+![spring boot图片](images/QQ20190623-140710@2x.jpg)
 
 [spring boot starter](https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/using-boot-build-systems.html#using-boot-starter)
 
@@ -125,7 +125,7 @@ public class HelloController {
 </dependency>
 ```
 
-![bruid 其他属性配置](/Users/dongyifeng/doc/spring_boot/images/QQ20190623-164717@2x.jpg)
+![bruid 其他属性配置](images/QQ20190623-164717@2x.jpg)
 
 
 
