@@ -1,0 +1,807 @@
+[TOC]
+
+# 概述
+
+## 常见的排序方法
+
+| 排序算法         | 时间复杂度 | 是否基于比较 | 空间复杂度 |
+| ---------------- | ---------- | ------------ | ---------- |
+| 冒泡，插入，选择 | $O(n^2)$   | 是           | $ O(1)$    |
+| 快排，归并       | $O(nlogn)$ | 是           |            |
+| 桶，计数，基数   | $O(n)$     | 否           |            |
+
+# 如何分析一个“排序算法”
+
+## 排序算法执行效率
+
+### 最好情况，最坏情况，平均情况的时间复杂度
+
+了解排序算法在不同数据下的性能表现。
+
+### 时间复杂度的系数，常数，低阶
+
+O(n) 表示法会忽略系数，常数，低阶。但是开发中排序的规模很小时，系数，常数，低阶对性能影响很大。
+
+### 比较次数和交换（或移动）次数
+
+基于比较排序算法的执行过程：
+
+1. 元素比较大小。
+2. 元素交换或者移动。
+
+## 排序算法的内存消耗
+
+算法内存消耗：通过空间复杂度来衡量。
+
+排序算法引入一个新概念：原地排序（Sorted in place）,空间复杂度为O(1)
+
+## 排序算法是否稳定
+
+稳定性：如果待排序的序列中存在值相等的元素，经过排序之后，相等元素之间原有的先后顺序不变。
+
+稳定性意义：对于多建排序(A,B)。
+
+方案一：
+
+1. 按 A 进行排序
+2. A 相同的按B 排序。
+
+实现时，很多细节，实现麻烦。
+
+如果借用稳定排序。
+
+方案二：
+
+1. 按 A 进行排序
+2. 按 B 进行排序
+
+稳定排序算法：
+
+不稳定排序算法：
+
+# 排序算法
+
+## 冒泡算法（Bubble Sort）
+
+![bubble sort](images/1391679-20180618163321525-1936669878.gif)
+
+```python
+# 冒泡排序
+def bubble_sort(nums):
+    if len(nums) < 2: return nums
+    for i in range(len(nums)):
+        for j in range(len(nums) - i - 1):
+            if nums[j] > nums[j + 1]: nums[j], nums[j + 1] = nums[j + 1], nums[j]
+    return nums
+
+'''
+优化后排序，如果没有交换，那么nums 已经有序，直接退出。
+'''
+def bubble_sort2(nums):
+    if len(nums) < 2: return nums
+    for i in range(len(nums)):
+        flag = False
+        for j in range(len(nums) - i - 1):
+            if nums[j] > nums[j + 1]:
+                flag = True
+                nums[j], nums[j + 1] = nums[j + 1], nums[j]
+        if not flag:
+            return nums
+    return nums
+
+print(bubble_sort([1, 5, 2, 3]))
+print(bubble_sort2([1, 5, 2, 3]))
+```
+
+1. 冒泡排序是原地排序算法吗？
+
+   只有比较大小和交换位置，空间复杂度为：O(1)，==是原地排序算法==。
+
+2. 冒泡排序是稳定排序算法吗？
+
+   当元素相等时，不做交换，所以==是稳定排序算法==。
+
+3. 冒泡排序的时间复杂度多少？
+
+   优化后的冒泡排序：
+
+   最好情况：1，2，3，4，5，6：只冒一次泡，$ O(n)$
+
+   最坏情况：6，5，4，3，2，1：冒 6 次泡，$O(n^2)$ 
+
+   平均情况：$ \frac{n*(n-1)}{4} $ 即为 $ O(n^2) $
+
+   ​	平均情况计算比较复杂，可以通过概率论的知识求解。也可以通过==“有序度”和“逆序度”==两个概念分析。
+
+   **有序度**：数组中具有有序关系的元素对的个数。
+
+   > 有序元素对： a[i] <= a[j]  and i < j
+
+   例子：[ 2，4，3，1，5，6 ]
+
+   有序对：(2 , 4) , (2 , 3) , (2 , 5) ,(2 , 6)
+
+   ​               (4 ,5) , (4 , 6)
+
+   ​			   (3 , 5) , (3 ,6)
+
+   ​				(1 , 5) , (1 , 6)
+
+   ​				(5 , 6)
+
+   有序元素对：11 个
+
+   [ 6，5，4，3，2，1 ] 有序元素对：0 个 
+
+   [ 1，2，3，4，5，6 ] 有序元素对：$ \frac{n(n-1)}{2} $ 个
+
+   这种完全有序的数组的有序度：==**满有序度**==
+
+   逆序度与有序度刚好相反
+
+   > 逆序元素对：a[i] > a[j] and i < j
+
+   ==**逆序度 = 满有序度 - 有序度**==
+
+   
+
+   排序的过程就是：增加有序度，减少逆序度的过程。达到满有序度时，排序完成。
+
+   ![冒泡排序有序度](../../ml/sklearn/images/QQ20191022-141016.png)
+
+   ​	冒泡排序包含两个原子：比较和交换。
+
+   ​    每交换一次，有序度 +1。
+
+   不管怎么改进，交换次数总是确定的，即为**逆序度**。$ \frac{n*(n-1)}{2} - 初始有序度 $ 。
+
+   n 个元素的数组进行冒泡排序：
+
+   最好情况，初始有序度为 $ \frac{n*(n-1)}{2}$ ,需要 0 次交换。
+
+   最坏情况，初始有序度为 0，需要$ \frac{n*(n-1)}{2}$ 次交换，即为 $ O(n^2) $
+
+   平均情况，$[0,\frac{n*(n-1)}{2}]$ 的中间值 $ \frac{n*(n-1)}{4} $ ，即为 $ O(n^2) $
+
+## 
+
+
+
+## 插入排序（Insertion Sort）
+
+![](images/1391679-20180618165919523-196396537.gif)
+
+向一个有序数组中插入一个数据，如何保证插入后依然是有序数组。遍历数组（二分查找）对应位置插入。
+
+插入排序就是借鉴的这种思想。
+
+插入排序：将数组划分为连个区间：==**已排序区间和未排序区间**== 。从未排序区间获取数据，插入已排序区间。
+
+```python
+# 插入排序的标准姿势
+def insertion_sort(nums):
+    if len(nums) < 2: return nums
+    for i in range(1, len(nums)):
+        v = nums[i]
+        j = i - 1
+        while j >= 0 and nums[j] > v:
+            nums[j + 1] = nums[j]
+            j -= 1
+        nums[j + 1] = v
+    return nums
+  
+print(insertion_sort2([4, 5, 6, 1, 3, 2]))
+```
+
+1. 插入排序是原地排序算法吗？
+
+   只有比较大小和交换位置，空间复杂度为：O(1)，==是原地排序算法==。
+
+2. 插入排序是稳定排序算法吗？
+
+   当元素相等时，我们可以选择插入前边和后边，所以==是稳定排序算法==。
+
+3. 插入排序的时间复杂度多少？
+
+   最好的情况：数组已有序，不需要插入，只需要遍历一遍数据，时间复杂度为：$O(n)$ 
+
+   最坏的情况：数组倒序，需要 n 次插入，每次选择插入位置时间为 $O(n)$, 整体时间复杂度：$O(n^2)$ 
+
+   平均情况：假设有 n/2 次插入，每次选择插入位置时间为 $O(n)$，整体时间复杂度：$O(n^2)$
+
+虽然冒泡排序和插入排序的时间复杂度为 $O(n^2)$ ，但是插入排序在实际工程中应用更广泛。应为冒泡排序没有优化空间，而插入排序有。比如希尔排序。
+
+
+
+### 希尔排序
+
+希尔排序是插入排序升级版。
+
+```python
+def shell_sort(nums):
+    n = len(nums)
+    gap = int(n / 2)
+
+    while gap > 0:
+        for i in range(gap, n):
+            temp = nums[i]
+            j = i
+            # 插入排序
+            while j >= gap and nums[j - gap] > temp:
+                nums[j] = nums[j - gap]
+                j -= gap
+            nums[j] = temp
+        gap = int(gap / 2)
+    return nums
+```
+
+# 选择排序（selection sort）
+
+![selection sort](images/Selection-Sort.gif)
+
+选择排序与插入排序思路类似：将数组划分为连个区间：==**已排序区间和未排序区间**== 。选择排序每次会从未排序区选择最小元素，插入已排序区的最后。
+
+```python
+# 搜索排序的标准姿势
+def selection_sort(nums):
+    n = len(nums)
+    if n < 2: return nums
+    for i in range(n):
+        # 或者最小值
+        x = i
+        for j in range(i, n):
+            if nums[x] > nums[j]:
+                x = j
+        # 已排序区间末尾
+        nums[i], nums[x] = nums[x], nums[i]
+    return nums
+```
+
+1. 选择排序是原地排序算法吗？
+
+   只有比较大小和交换位置，空间复杂度为：O(1)，==是原地排序算法==。
+
+2. 选择排序是稳定排序算法吗？
+
+   在非排序区查找最小值，与前边元素交换，破坏了稳定性。==不是稳定排序算法==
+
+   例如：$[7_1,2,5,9,3,4,7_2,1]$ 1 是非排序区最小元素，1 与 $7_1$ 交换位置。这样就破坏了 $7_1 与 7_2$ 之间的原有的顺序。
+
+3. 选择排序的时间复杂度多少？
+
+   选择的情况：数组已有序，遍历一遍数据需要时间 n，每次都需在非排序区查找最小值 所需时间为 n，时间复杂度为：$O(n)$ 
+
+   最坏的情况：与最好情况一样，整体多了 n 次插入操作, 整体时间复杂度：$O(n^2)$ 
+
+   平均情况：与最好情况一样，整体多了 n/2 次插入操作, 整体时间复杂度：$O(n^2)$ 
+
+# 归并排序（Merge Sort）
+
+![](images/Merge-sort-example-300px.gif)
+
+![merge sort](images/QQ20191024-225317@2x.png)
+
+关键点：
+
+1. 分治思想
+
+```python
+def merge_sort(nums, start, end):
+    if start >= end: return
+    mid = (start + end) >> 1
+    merge_sort(nums, start, mid)
+    merge_sort(nums, mid + 1, end)
+    merge(nums, start, mid, end)
+
+
+def merge(nums, start, mid, end):
+    if start >= mid or mid >= end: return
+    left_nums = nums[start: mid]
+    right_nums = nums[mid: end]
+    # 添加哨兵
+    left_nums.append(sys.maxsize)
+    right_nums.append(sys.maxsize)
+
+    l = r = 0
+    for i in range(start, end):
+        if (left_nums[l] <= right_nums[r]):
+            nums[i] = left_nums[l]
+            l += 1
+        else:
+            nums[i] = right_nums[r]
+            r += 1
+
+```
+
+> 递推公式：
+>
+> merge_sort(low , high) = merge( merge_sort(low , mid),merge_sort(mid+1,high) )
+>
+> 终止条件
+>
+> low >= high
+
+merge 方法时将两个有序数据，合并成一个有序数组。
+
+1. 归并排序是原地排序算法吗？
+
+   在merge 过程中借助了新数组，空间复杂度为：O(n)，==不是原地排序算法==。
+
+2. 归并排序是稳定排序算法吗？
+
+   归并排序是否稳定，关键看 merge 函数。if left_nums[l] == right_nums[r] 优先放 left_nums 中元素，那么就是==稳定排序==。
+
+3. 归并排序的时间复杂度多少？
+
+   $O(nlog{n})$
+
+   - T(a) 求解问题 a 的所需的时间
+
+   - T(b) 求解子问题 b 的所需的时间
+
+   - T(c) 求解子问题 c 的所需的时间
+
+   - K 将两个子问题 b ，c 结果merge 所消耗的时间。
+   
+   $$
+   \begin{align}
+   T(a) =& T(b) + T(c) + K \\
+   \\
+   T(1) =& C \\
+   T(n) =& 2*T(\frac{n}{2}) + n \\
+   		 =& 2*(2*T(\frac{n}{4})+\frac{n}{2}) + n = 4*T(\frac{n}{4}) + 2*n \\
+   		 =& 4*(2*T(\frac{n}{8})+\frac{n}{2}) + 2*n =  8*T(\frac{n}{8}) + 3*n \\
+		 =& 8*(2*T(\frac{n}{16})+\frac{n}{2}) + 3*n =  16*T(\frac{n}{16}) + 4*n \\
+   		 =& ....... \\
+		 =& 2^k * T(n/2^k) + k*n \\
+   		 =& ....... \\
+   \end{align}
+   $$
+   
+
+   
+```python
+   T(a) = T(b) + T(c) + K
+```
+
+
+
+   归并排序的执行效率与要排序的原始数组的有序程度无关，所以其时间复杂度非常稳定。最好情况，最好情况，平均情况都是：O(nlogn).
+
+4. 归并排序的空间复杂度多少？
+
+   O(n)：在merge 过程，需要借助额外的存储空间。
+
+   注意：**空间复杂度不像时间复杂度一样，每次迭代都需要累加，临时开辟的内存空间使用完毕后，就会被释放掉。**
+
+# 快速排序(quick sort)
+
+![quick sort](images/Quicksort-example.gif)
+
+关键点：
+
+1. 分治思想
+2. 基本思想：
+   1. 数组下标从low 到 high ，从 low 和 high 中任意选择一个数据作为 pivot （区分点）,一般情况下，可以选择数组最后一个元素。
+   2. low --> high 遍历数据，小于pivot 的数据放左边，大于pivot 的数据放右边。最后 pivot 放中间。
+   3. 分治：划分为两个子问题：[low,pivot -1 ] 和 [pivot-1,hight] 两个子数组
+
+```python
+def quick_sort(arr, low, high):
+    if low >= high: return
+    m = partition(arr, low, high)
+    quick_sort(arr, low, m - 1)
+    quick_sort(arr, m + 1, high)
+
+
+def partition(arr, low, high):
+    x = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if nums[j] <= x:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+
+nums = [4, 5, 6, 1, 3, 2]
+quick_sort(nums, 0, len(nums) - 1)
+print(nums)
+```
+
+> 递推公式
+>
+> quick_sort (low , high) = quick_sort (low , m-1) + quick_sort (m+1 , high)
+>
+> 终止条件
+>
+> low >= high 
+
+注意在 partition 时，为了是原地排序，利用了选择排序的思想，通过游标 i 将数组划分为两部分，A[low,i-1] 中的元素小于 pivot ，是==已处理区间==，A[i,high-1] 是==未处理区间==。每次从未处理区间获取一个元素 A[ j ] ，if A[ j ] < pivot 将其加入到已处理区间的尾部，就是A [ i ] 的位置。
+
+注意：插入操作需要搬移数据，非常耗时，可以通过交换，在 O(1) 时间复杂度内完成插入操作。将 A[i] 与 A[j] 交换。所以==**快排是不稳定排序**==
+
+
+
+归并排序和快速排序，都使用了分治思想，递归公式和递归代码非常相似。
+
+区别：partition 和 merge 方法。
+
+![](images/20191026113607.jpg)
+
+归并排序的处理过程是：==**由下向上**==，子问题处理完毕后，再合并。
+
+快速排序的处理过程是：==**由上向下**==，先分区，然后再处理子问题。
+
+归并排序非原地排序，浪费了O(n) 的空间。快排通过巧妙的原地分区函数，可以实现原地排序，解决了归并排序占用内存过多的问题。
+
+
+
+1. 快排是原地排序算法吗？
+
+   ==是原地排序算法==。
+
+2. 快排是稳定排序算法吗？
+
+   ==**快排是不稳定排序**==
+
+3. 快排的时间复杂度多少？
+   $$
+   \begin{align}
+   T(1) =& C;\\
+   T(n) =& 2*T(\frac{n}{2})+n; n>1
+   \end{align}
+   $$
+   上边公式要成立，要选择合适的 pivot，正好将大区间一分为二。实际上很难。
+
+   比如：原数组已经有序了[1,3,5,6,8]，每次选择最后一个元素作为 pivot，那么每次选得两个分区都是不均等的，那么整个排序过程需要大约 n 次分区操作， 每次分区平均要扫描 n/2 个元素。那么此时快排的时间复杂度从 O(nlogn) 退化为   $O( n^2 )$
+
+   最好情况：O(nlogn) 
+
+   最坏情况：$O( n^2 )$
+
+   平均情况：从递归树考虑，一棵普通的二叉树，深度是O(nlogn) ，那么时间复杂度为：O(nlogn) 。
+
+
+
+例题：在 O(n) 的时间复杂度内查找一个无序数组中的第 K 小元素。
+
+```python
+def find_k(arr, low, high, k):
+    if low >= high: return
+    m = partition(arr, low, high)
+
+    if m == k - 1:
+        return nums[m]
+    # 在[low,m-1] 区间内查找
+    if m > (k - 1):
+        return find_k(arr, low, m - 1, k)
+    else:
+         # 在[m+1,high] 区间内查找
+        return find_k(arr, m + 1, high, k)
+      
+def partition(arr, low, high):
+    x = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if nums[j] <= x:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+      
+```
+
+# 桶排序(bucket sort)
+
+之前排序算法最低时间复杂度最低是：O(nlogn)
+
+接下来，在特定的场景下，时间复杂度突破O(nlogn),达到 O(n)
+
+
+
+桶排序基本思想：将排序的数据分到几个桶里，每个桶里单独排序，然后将每个桶中的数据依次取出，组成有序的序列。
+
+【图：桶排序过程】
+
+```python
+# 指定桶的数量
+def bucket_sort(nums, bucket_count):
+    # 分桶
+    buckets = [[] for i in range(bucket_count)]
+    margin = int((max(nums) - min(nums)) / bucket_count) + 1
+    for num in nums:
+        j = int(num / margin)
+        if j == bucket_count: j -= 1
+        buckets[j].append(num)
+
+    # 桶内排序
+    for i in range(bucket_count):
+        buckets[i] = sorted(buckets[i])
+
+    # 整体排序
+    k = 0
+    for i in range(bucket_count):
+        for j in range(len(buckets[i])):
+            nums[k] = buckets[i][j]
+            k += 1
+    return nums
+```
+
+上边代码有个缺陷：无法对负数，小数进行排序。
+
+桶排序对数据要求比较苛刻：==数据分布尽可能均匀==。如果所有数据都划分到一个桶里，那么算法将退化为：O(nlogn)
+
+==桶与桶之间天然有着顺序==，桶与桶之间不需要再进行排序。
+
+1. 桶排序是原地排序算法吗？
+
+   桶排序借助了桶，所以==不是原地排序算法==。
+
+2. 归并排序是稳定排序算法吗？
+
+   桶排序，**跟实现有关**，第一种实现，存储原始数据是==稳定排序==。但是第二种实现，只是计数，丢掉了原始数据的顺序，就是：==非稳定排序==。
+
+3. 归并排序的时间复杂度多少？
+
+   跟数据的分布和桶的数量有关。正常情况下是O(n)
+
+   假设：有 n 个数据，m 个桶，平均每个桶中有 k = n/m  条数据。
+
+   ​			桶内快排：O(k*logk)
+
+   ​			m 个桶：$O(m*k*logk)$
+
+   ​			代入 k = n/m：$O(m*\frac{n}{m}*log\frac{n}{m})=O(n*log(\frac{m}{n}))$
+
+   ​			当 m 接近 n 时，k = 1，那么：O(n)
+
+## 应用：外部排序
+
+所谓外部排序，数量非常大，存储在磁盘上，无法将数据全部加载到内存中。
+
+例如：有 100 GB 的订单数据，需要按金额（假设是正整数）进行排序，内存只有500MB。
+
+步骤：
+
+1. 扫一遍数据，获取 min = 1元，max = 10万元。
+2. 将订单数据根据金额划分到100个桶里，[1,1000],[1001,2000]...，每个桶对应一个文件。
+3. 如果数据分布均匀，每个文件大概在100MB 左右，将每个文件中的数据，加载到内存中排序，将排序结果存入新的文件。
+4. 根据排序后的文件的结果，合并成最终文件。
+5. 如果数据分布不均等，发现[1,1000] 数量特别大。那么针对这个文件，再次划分，直到所有文件都能加载的内存为止。
+
+# 计数排序( counting sort )
+
+==计数排序是桶排序的一种特殊情况。==
+
+n 个数据中，k = max(nums) ，那么将数据分到 k 个桶中，每个桶中的数值都是相同的，省掉了桶内排序的时间。
+
+```python
+def counting_sort(nums):
+    bucket_count = max(nums) + 1
+    # 创建桶
+    buckets = [0 for i in range(bucket_count)]
+
+    # 计数
+    for num in nums:
+        buckets[num] += 1
+        
+    # 整体排序
+    k = 0
+    for i in range(bucket_count):
+        while buckets[i] > 0:
+            nums[k] = i
+            k += 1
+            buckets[i] -= 1
+
+    return nums
+```
+
+这是最简单计数排序，但是不是稳定排序，在 buckets 中丢到顺序。
+
+改进方案：
+
+```python
+def counting_sort2(nums):
+    bucket_count = max(nums) + 1
+    # 创建桶
+    buckets = [0 for i in range(bucket_count)]
+
+    # 计数
+    for num in nums:
+        buckets[num] += 1
+	
+  	# 累加
+    for i in range(1, bucket_count):
+        buckets[i] += buckets[i - 1]
+
+    # 整体排序
+    r = nums[:]
+    for i in range(len(nums) - 1, -1, -1):
+        index = buckets[nums[i]] - 1
+        r[index] = nums[i]
+        buckets[nums[i]] -= 1
+
+    nums = r[:]
+    return nums
+```
+
+**总结：计数排序只能用在数据范围不大的场景中，如果要排序。如果范围 k 比 数据量 n 大很多，就不适合计数排序了。计数排序只能为非负数排序，如果有负数的场景，在不改变相对大小的前提下，转化为非负数**
+
+例如：数据范围是[-1000,1000],可以对每个数加1000，转换。
+
+如果是精确到小数后一位，可以对每个数乘10。
+
+# 基数排序(Radix sort)
+
+问题：有10个手机号，希望从小到大排序？
+
+方案分析：快排是O(nlogn)
+
+桶排序和计数排序但是手机号11位，范围太大不合适。
+
+场景特点：比较手机号a、b，如果 a 的高位大于b 的高位，那么后边几位就不需要比了。如此可以，先比较第一位，然后比较第二位。==注意：排序方法要稳定，否则低位排序就没有意义了==。
+
+![基数排序过程图](images/radixSort.gif)
+
+```python
+def radix_sort(nums):
+    if len(nums) < 2: return
+    l = len(str(max(nums)))
+
+    i = 0
+
+    while i < l:
+        buckets = [[] for i in range(10)]
+        for x in nums:
+            buckets[int(x / (10 ** i)) % 10].append(x)
+
+        print(buckets)
+        nums.clear()
+        for bucket in buckets:
+            for y in bucket:
+                nums.append(y)
+        i += 1
+    return nums
+```
+
+对于不等长的数字，可以在前边补0。
+
+对于不等长的单词，在后边补0，因为所有字母的 [ASCII 值](https://zh.wiktionary.org/wiki/US-ASCII) 都大于0.
+
+总结：
+
+1. 基数排序的数据，需要可以割出来独立的“位”来比较，而且位之间有递进关系，如果 a 的高位比 b 数据大，那剩下的低位不就需要比较了。
+
+2. 每个位的数据范围不能太大，要可以用线性算法排序。否则基数排序就无法做到O(n)了。
+
+   
+
+1. 基数排序是原地排序算法吗？
+
+   基数排序借助了桶排序，所以==是非原地排序算法==。
+
+2. 归并排序是稳定排序算法吗？
+
+   基数排序借助了桶排序，所以==是稳定排序==。
+
+3. 归并排序的时间复杂度多少？
+
+   基数排序借助了桶排序，所以==是O(n)==。
+
+# 排序算法的选择
+
+
+
+![](images/20191026202843.jpg)
+
+冒泡排序，插入排序，选择排序时间复杂度都是O(n^2)，小量数据上使用没有问题。
+
+大量数据时，最好使用O(nlogn) 的排序方法。
+
+虽然快速排序和归并排序都是O(nlogn)，但是实际中快排使用更多一点，因为归并排序不是原地排序，空间复杂度为 O(n)。
+
+## 优化快排
+
+快排在最坏情况下会退化为 $O(n^2)$ ,那么如何避免呢？
+
+出现最坏的情况，主要原因：==**分区点选择不够合理**==。
+
+目标：理想的分区点：==被分开的两个子区间，数据量差不多==。
+
+
+
+### 分区点选择
+
+#### 三数取中法
+
+从区间首，尾，中间，分别取一个数，比较大小后，去中值。
+
+数据量比较大，可以衍生出：“五数取中”，“十数取中”等。
+
+```python
+def quick_sort(arr, low, high):
+    if low >= high: return
+    m = partition_mid(arr, low, high)
+    quick_sort(arr, low, m - 1)
+    quick_sort(arr, m + 1, high)
+    
+ 
+def partition_mid(arr, low, high):
+    # 三选一
+    mid = (low + high) >> 2
+    x_0 = arr[low]
+    x_1 = arr[mid]
+    x = arr[high]
+
+    min_x = min([x, x_1, x_0])
+    max_x = max([x, x_1, x_0])
+    if max_x > x_0 and x_0 > min_x:
+        x = x_0
+        arr[high], arr[low] = arr[low], arr[high]
+    if max_x > x_1 and x_1 > min_x:
+        x = x_1
+        arr[high], arr[mid] = arr[mid], arr[high]
+
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= x:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+```
+
+
+
+#### 随机法
+
+从排序区间中，随机取一个数，作为分区点。
+
+才概率角度来看，这种方法大概率不会取最好的分区点，但也大概率也不会取到最差的分区点。
+
+```python
+import random
+
+def quick_sort(arr, low, high):
+    if low >= high: return
+    m = partition_random(arr, low, high)
+    quick_sort(arr, low, m - 1)
+    quick_sort(arr, m + 1, high)
+
+def partition_random(arr, low, high):
+    index = random.randint(low, high)
+    x = arr[index]
+    arr[high], arr[index] = arr[index], arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= x:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+```
+
+
+
+## 分析 qsort 函数
+
+qsort 是 C 语言的排序函数。
+
+1. 当数量小于 4 时，会使用插入排序O(n^2)
+
+   1. 使用哨兵，减少判断。
+   2. 数量小时，O(n^2) 算法未必运行时间长。只是描述趋势，省略很多系数和低阶。
+   3. 使用非递归，简单实现。效率更高。
+
+2. 当数据量大于4，小于 x 时，会使用归并排序。
+
+   1. 数据量较小，即便是空间复杂度翻一倍，影响也不大。
+
+3. 当数据量大于 x 时，会使用快速排序。
+
+   1. 使用三数取中法，选择分区点。
+   2. 在堆上手动模拟递归压栈、出栈过程，而非递归，防止堆栈溢出。
+
+   

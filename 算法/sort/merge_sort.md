@@ -1,1 +1,0 @@
-![合并排序](images/meger_sort.gif)
