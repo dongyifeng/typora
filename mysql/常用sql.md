@@ -11,7 +11,7 @@ alter table search_task_log drop column source;
 alter table search_task_log change iterm_id item_id varchar(128) DEFAULT '' COMMENT '处理主体标识';
 
 # 修改列类型
-
+ALTER TABLE bomb_box MODIFY link varchar(1024) NOT NULL DEFAULT '' COMMENT '跳转链接';
 ```
 
 
