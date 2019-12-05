@@ -23,12 +23,16 @@ ALTER TABLE bomb_box MODIFY link varchar(1024) NOT NULL DEFAULT '' COMMENT '跳�
 alter table search_status_index add index index_status_id_created_at(`status_id`,`status_created_at`,`sharding_id`);
 
 # 唯一索引
-alter table table_name add unique (column_list) ;
+alter table table_name add unique index_name (column_list) ;
 
 # 主键索引
-alter table table_name add primary key (column_list) ;
+alter table table_name add primary key index_name (column_list) ;
 
 # 删除索引
 alter table search_status_index drop index index_status_id_created_at;
+```
+
+```sql
+show tables like '%ticket%'
 ```
 
