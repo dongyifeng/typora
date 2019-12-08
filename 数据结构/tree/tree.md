@@ -123,6 +123,16 @@ class BinarySearchTree:
             self.inorder(node.left)
             print(node.data)
             self.inorder(node.right)
+    '''
+    depth = get_depth(left_sub_tree,right_sub_tree) + 1
+    '''
+    def get_depth(self, node):
+        if not node:
+            return 0
+        left_h = self.get_depth(node.left)
+        right_h = self.get_depth(node.right)
+        return max(left_h, right_h) + 1
+
 
 data = [6, 3, 8, 2, 5, 1, 7]
 binarySearchTree = BinarySearchTree()
