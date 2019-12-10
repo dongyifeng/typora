@@ -147,6 +147,8 @@ class Trie:
 
 
 
+
+
 Trie Tee 的 children 可以是有序数组，调表，散列表，红黑树等。
 
 Trie Tree 有一些变体，可以在一定程度上缓解内存消耗的问题，比如：缩点优化。
