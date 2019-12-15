@@ -1,4 +1,8 @@
-![](image/20191205222250.jpg)
+[TOC]
+
+![](../image/20191205222250.jpg)
+
+# 二叉树遍历
 
 ```python
 print("二叉树遍历")
@@ -57,7 +61,9 @@ print("后序遍历")
 postorder(root)
 ```
 
-二叉搜索树（Binary Search Tree）
+
+
+# 二叉搜索树（Binary Search Tree）
 
 定义：
 
