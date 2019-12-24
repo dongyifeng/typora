@@ -1,3 +1,7 @@
+[TOC]
+
+# Java
+
 java list 删除元素
 
 ```java
@@ -17,7 +21,9 @@ java list 删除元素
 
 
 
-hbase
+# Shell
+
+## hbase
 
 ```shell
 hbase shell
@@ -63,5 +69,10 @@ Java group_by 后，将List<Map> 转为List<String>
             System.out.println("finally");
         }
         System.out.println("over");
+```
+
+```shell
+# 解压
+tar -zxvf apache-zookeeper-3.5.6-bin.tar.gz
 ```
 
