@@ -1,3 +1,12 @@
+Select 
+
+```mysql
+create table candelete.cube_stock_id  as
+SELECT DISTINCT(stock_id) as stock_id from blizzard.balance_history
+```
+
+
+
 列
 
 ```mysql
