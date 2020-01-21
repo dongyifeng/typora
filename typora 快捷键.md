@@ -34,6 +34,22 @@
 
 
 
+```mermaid
+sequenceDiagram
+    加锁 ->> 业务处理 : wx.login()获取code
+    小程序 ->> + 服务器 : wx.request()发送code
+    服务器 ->> + 微信服务器 : code+appid+secret
+    微信服务器 -->> - 服务器 : openid
+    服务器 ->> 服务器 : 根据openid确定用户并生成token
+    服务器 -->> - 小程序 : token
+```
+
+
+
+
+
+
+
 
 
 

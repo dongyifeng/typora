@@ -309,10 +309,6 @@ log-impl 的其他选择：
 
 
 
-
-
-
-
 ## 通过 @MapperScan 替换 @Mapper
 
 每一个mapper 类都加@Mapper 太麻烦。
@@ -422,4 +418,6 @@ public class Employee {
     }
 }
 ```
+
+# 读写分离
 
