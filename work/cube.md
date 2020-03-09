@@ -35,3 +35,13 @@ ORDER BY profit DESC
 LIMIT 50
 ```
 
+
+
+查询用户调仓
+
+```shell
+ssh 10.10.54.2
+
+grep "cubes/rebalancing/create.json" */logs/http_access.log-20200226* | grep "6416922094"
+```
+

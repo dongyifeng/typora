@@ -128,7 +128,7 @@ cron 表达式：秒 分 时 日 月 周几
 依赖
 
 ```xml
-xml<dependency>
+<dependency>
    <groupId>org.springframework.boot</groupId>
    <artifactId>spring-boot-starter-mail</artifactId>
 </dependency>
