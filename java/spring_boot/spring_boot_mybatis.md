@@ -103,10 +103,10 @@ public class DruidConfig {
 ```yml
 spring:
   datasource:
-    username: xueqiu
-    password: snowball2010233
+    username: admin
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.10.201.107:3306/snowball
+    url: jdbc:mysql://ip:3306/mysql_DB_name
     type: com.alibaba.druid.pool.DruidDataSource
 ```
 
