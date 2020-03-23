@@ -25,10 +25,10 @@
 ```yaml
 spring:
   datasource:
-    username: xueqiu_read
-    password: 9%j%{X7j
+    username: admin
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.10.201.107:3306/snowball
+    url: jdbc:mysql://127.0.0.1:3306/user_center
 ```
 
 默认是用 class com.zaxxer.hikari.HikariDataSource 作为数据源;
