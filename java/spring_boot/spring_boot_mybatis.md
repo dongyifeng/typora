@@ -74,9 +74,9 @@ public class DruidConfig {
         Map<String, String> initParams = new HashMap<>();
 
         initParams.put("loginUsername", "admin");
-        initParams.put("loginPassword", "123456");
+        initParams.put("loginPassword", "admin");
         initParams.put("allow", "");// 默认允许所有访问.
-        initParams.put("deny", "192.168.15.21");
+        initParams.put("deny", "127.0.0.1");
 
         bean.setInitParameters(initParams);
         return bean;
@@ -103,10 +103,10 @@ public class DruidConfig {
 ```yml
 spring:
   datasource:
-    username: xueqiu
-    password: snowball2010233
+    username: admin
+    password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.10.201.107:3306/snowball
+    url: jdbc:mysql://127.0.0.1:3306/test
     type: com.alibaba.druid.pool.DruidDataSource
 ```
 

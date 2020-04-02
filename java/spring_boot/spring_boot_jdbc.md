@@ -25,10 +25,10 @@
 ```yaml
 spring:
   datasource:
-    username: xueqiu_read
-    password: 9%j%{X7j
+    username: admin
+    password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.10.201.107:3306/snowball
+    url: jdbc:mysql://10.10.201.107:3306/test
 ```
 
 默认是用 class com.zaxxer.hikari.HikariDataSource 作为数据源;
@@ -149,7 +149,7 @@ public class DruidConfig {
         Map<String, String> initParams = new HashMap<>();
 
         initParams.put("loginUsername", "admin");
-        initParams.put("loginPassword", "123456");
+        initParams.put("loginPassword", "admin");
         initParams.put("allow", "");// 默认允许所有访问
         // 拒绝访问
         initParams.put("deny", "192.168.15.21");

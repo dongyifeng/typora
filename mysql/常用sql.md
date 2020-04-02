@@ -45,3 +45,12 @@ alter table search_status_index drop index index_status_id_created_at;
 show tables like '%ticket%'
 ```
 
+日期
+
+```mysql
+# 
+select unix_timestamp('2016-01-02')*1000;  
+
+select from_unixtime(1451997924);  
+```
+

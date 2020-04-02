@@ -1,3 +1,32 @@
+# 组合比赛
+
+## redis 
+
+```shell
+# 组合标签
+./redis_blizzard.sh get "blizzard:cube_tags:2158942"
+
+# 比赛信息
+./redis_cube_genius.sh get "cube_genius:game:cube:game_info:11"
+
+# 组合调仓信息
+
+
+# rpc
+./redis_blizzard.sh get "blizzard:rebalancing:symbol:rb_id:68414672"
+
+# 组合最新调仓
+./redis_blizzard.sh get "blizzard:lastRebalancing:cube_id:969111"
+
+
+```
+
+
+
+
+
+
+
 计算组合收益：指定时间段
 
 ```mysql
@@ -43,5 +72,15 @@ LIMIT 50
 ssh 10.10.54.2
 
 grep "cubes/rebalancing/create.json" */logs/http_access.log-20200226* | grep "6416922094"
+```
+
+
+
+
+
+慢SQL 
+
+```shell
+grep -A1 "ERROR" mysql.log |sed 's/slow sql //g'| sed 's/ millis.//'  | awk -F"|" '{if(match($0,"ERROR")){ a= $5  }else{OFS="\t"; print a,$0 }}'  | grep -v '-' | sort -k1rn | more
 ```
 
