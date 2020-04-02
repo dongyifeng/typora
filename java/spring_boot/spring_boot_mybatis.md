@@ -104,9 +104,15 @@ public class DruidConfig {
 spring:
   datasource:
     username: admin
+<<<<<<< HEAD
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/test
+=======
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://ip:3306/mysql_DB_name
+>>>>>>> 5b8953e2791b5802020629a326b671272147e79c
     type: com.alibaba.druid.pool.DruidDataSource
 ```
 
