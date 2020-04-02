@@ -26,15 +26,9 @@
 spring:
   datasource:
     username: admin
-<<<<<<< HEAD
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://10.10.201.107:3306/test
-=======
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/user_center
->>>>>>> 5b8953e2791b5802020629a326b671272147e79c
 ```
 
 默认是用 class com.zaxxer.hikari.HikariDataSource 作为数据源;
