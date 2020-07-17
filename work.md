@@ -76,3 +76,30 @@ Java group_by 后，将List<Map> 转为List<String>
 tar -zxvf apache-zookeeper-3.5.6-bin.tar.gz
 ```
 
+**list 多字段排序**
+
+```java
+  List<HotRankStatusDto> data = hotRankStatus.stream()
+                .sorted(Comparator.comparing(HotRankStatusDto::getReplyCount).reversed()
+                        .thenComparing(HotRankStatusDto::getCreatedAt).reversed())
+                .collect(Collectors.toList());
+```
+
+# Impala
+
+正则扣数据
+
+```mysql
+WITH t1 AS
+  (SELECT REGEXP_EXTRACT(extend0,'click_tab_id":"?([^,"|}]+)',1) AS tab
+  FROM xueqiu.user_behavior
+  WHERE `day`=20191121
+     AND page_id=2200
+     AND component_type=1
+     AND REGEXP_EXTRACT(extend0,'click_area":"?([^,"|}]+)',1) ='股票' )
+SELECT tab,
+      count(1) AS c
+FROM t1
+GROUP BY tab
+```
+
