@@ -4,11 +4,11 @@
 
 钉钉群里经常反馈的问题。
 
-| Badcase              | Target               |
-| -------------------- | -------------------- |
-| ![](images/byd1.png) | ![](images/byd2.png) |
-|                      |                      |
-|                      |                      |
+| Badcase                                 | Target                                  |
+| --------------------------------------- | --------------------------------------- |
+| ![](images/byd1.png)                    | ![](images/byd2.png)                    |
+| ![](images/image2020-6-30_17-32-58.png) | ![](images/image2020-6-30_17-34-50.png) |
+| ![](images/image2020-6-30_17-33-22.png) | ![](images/image2020-6-30_17-35-18.png) |
 
 原因：
 
@@ -125,7 +125,9 @@ $p(y=1|x) = y $         $p(y=0|x) = 1 - y $
 
 ### 模型
 
-$y = f(wx) = \frac{1}{1+e^{-wx}}$
+$$
+y = f(wx) = \frac{1}{1+e^{-wx}}
+$$
 
 $ wx = w_1 * 是否全匹配 + w_2 * 匹配度 + w_3 * 粉丝数 + w_4 * 股票状态 + w_5 * 股票近期热度 $
 
@@ -233,7 +235,7 @@ Hession 矩阵：$\nabla \nabla L(w) = \sum_i {f(wx_i)(1-f(wx_i))x_ix_i^T }$
 
 ![](images/20200816211617.jpg)
 
-目的：为了得到更好的推广性能。控制模型复杂度。
+目的：提高模型的泛化能力。控制模型复杂度。
 
 奥卡姆剃刀：如无必要，勿增实体。
 
@@ -360,7 +362,7 @@ class SugRank:
 
 
 
-交叉验证
+调参
 
 ```python
 from sklearn.linear_model import LogisticRegression as LR
@@ -406,6 +408,28 @@ plt.legend(loc=4)
 plt.show()
 ```
 
+混淆矩阵
+
+
+
+
+
+
+$$
+
+$$
+
+
+
+$$
+
+$$
+
+
+
+$$
+
+$$
 ![](images/20200816220752.jpg)
 
 效果：比猜略微好。
@@ -432,7 +456,22 @@ plt.show()
 
 ![](images/image2020-6-30_15-24-56.png)
 
-智能排序
+在线智能排序
 
 ![](images/image2020-6-30_15-31-26.png)
 
+评测
+
+[AIBO 大数据平台](http://aibo.inter.snowballfinance.com/panel/details/321)
+
+![](images/20200817102527.jpg)
+
+左图：sug 第一位的点击率：$\frac{第一位点击数}{总点击数}$
+
+右图：sug Mean reciprocal rank：
+
+$MRR = \frac{1}{|click|} \sum_i^{|click|}{\frac{1}{rank_i}}$
+
+
+
+badcase 自动发现
