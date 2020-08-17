@@ -362,7 +362,7 @@ class SugRank:
 
 
 
-调参
+**调参**
 
 ```python
 from sklearn.linear_model import LogisticRegression as LR
@@ -408,28 +408,51 @@ plt.legend(loc=4)
 plt.show()
 ```
 
-混淆矩阵
+**混淆矩阵**
+
+混淆矩阵适用于：二分类问题。
+
+如果是多分类，转换成二分类问题。
+
+一级指标：
+
+- TP( True Postive )：真实值是 postive , 模型预测是 postive 的样本数。真阳性
+
+- FN( False Negative )：真实值是 postive , 模型预测是 negative 的样本数。假阴性
+
+- FP( False Postive )：真实值是 Negative , 模型预测是 postive 的样本数。假阳性
+
+- TN( True Negative )：真实值是 Negative , 模型预测是 negative 的样本数。真阴性
+
+对角线上数据值（TP，TN）越大越好。
+
+|            | 预测值 = 1 | 预测值 = 0 |
+| ---------- | ---------- | ---------- |
+| 真实值 = 1 | TP         | FN         |
+| 真实值 = 0 | FP         | TN         |
+
+二级指标
+
+- 准确率（Accuracy）= $\frac{TP+TN}{TP+TN+FP+FN}$ --- 针对整个模型
+
+- 精度( precision ) = $ \frac{TP}{TP+ FP}$  ---针对某一类别预测精度
+
+- 召回( recall ) = $\frac{TP}{TP+FN}$   ---针对某一类别真实数据召回情况
+
+- 特异度( specificity ) = $\frac{TN}{TN+FP}$
 
 
 
+三级指标
 
+- F1-值(  F1-score )  = $ \frac{2PR}{P+R} =\frac{2*TP}{2*TP+FP+FN}$
 
+P：precision
 
-$$
+R：recal
 
-$$
+更复杂评价指标：ROC 曲线和 AUC 值
 
-
-
-$$
-
-$$
-
-
-
-$$
-
-$$
 ![](images/20200816220752.jpg)
 
 效果：比猜略微好。
