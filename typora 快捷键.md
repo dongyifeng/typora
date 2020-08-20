@@ -48,7 +48,7 @@ sequenceDiagram
 
 常见符号：
 
-$\nabla$
+$\nabla$ $\Delta$ $\rightarrow$ $\uparrow$ $\downarrow$ $\leftarrow$ $\Uparrow$ $\Downarrow$ $\Leftarrow$ $\Rightarrow$ $\Updownarrow$ $\Leftrightarrow$  $\leftrightarrow$ $\longrightarrow$
 
 
 

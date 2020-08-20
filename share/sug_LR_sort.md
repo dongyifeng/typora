@@ -31,7 +31,7 @@ sug 排序规则： query 与 symbol 全匹配优先级最高。
 1. 近期更热的股票，排名更高。
 2. 退市的股票，排名更低。
 
-![](images/20200815111030.jpg)
+![](images/20200819145930.jpg)
 
 绿色：在线系统已有排序因子。
 
@@ -39,14 +39,16 @@ sug 排序规则： query 与 symbol 全匹配优先级最高。
 
 
 
-怎么将这么多排序因子融入排序？
+**多因子排序**
 
-1. 产品规则：定义优先级。
+怎么将这么多排序因子融合排序？
+
+1. 规则系统：定义优先级。
 2. 线性加权。
 
 
 
-产品规则缺点
+规则系统缺点
 
 1. 容易规则冲突。
 2. 线上代码逻辑复杂：各种规则堆砌。
@@ -75,17 +77,24 @@ $[w_1,w_2,w_3,w_4,w_5]$ 怎么调权？
 1. 拍脑袋。
 2. 机器调权（LR）。
 
+
+
+多因子排序场景：
+
+1. 个性化广告 CTR 预估。
+2. 搜索用户，股票，帖子。
+
 # LR
 
-## 机器学习
+## 机器学习基础概念
 
 **什么是机器学习？**
 
 计算机<font color="red">**自动**</font>从<font color="red">**数据**</font>中发现<font color="red">**规律**</font>，并应用于<font color="red">**解决新问题**</font>。
 
-- 跟定数据$(X_1,Y_1),(X_2,Y_2)...(X_n,Y_n)$ ，机器自动学习 X 和 Y 之间的关系，对于新 $X_i$ 能够预测 $Y_i$
+- 数据$(X_1,Y_1),(X_2,Y_2)...(X_n,Y_n)$ ，机器自动学习 X 和 Y 之间的关系，对于新 $X_i$ 能够预测 $Y_i$
   - 垃圾邮件识别：$(邮件_1,垃圾),(邮件_2,正常)...(邮件_n,垃圾)$
-  - $邮件_x => 垃圾 or 正常 ?$
+  - $邮件_x \Rightarrow $ 垃圾 or 正常 ?
 - 输入规则到输入数据。
 - 从机器执行到机器决策。
 
@@ -100,13 +109,20 @@ $[w_1,w_2,w_3,w_4,w_5]$ 怎么调权？
 **机器学习三要素**
 
 - 模型
-  - F(X) ：X -> Y 的映射
+  - F(X) ：X -> Y 的映射。
   - 问题的影响因素（特征）有哪些？它们之间的关系如何？
 - 策略
   - 什么样的模型是好的模型。
-  - 损失函数
+  - 损失函数：（最小化经验损失）。
+    - log 对数损失函数
+    - 0 - 1 损失函数
+    - 绝对值损失函数
 - 算法
-  - 如何高效的找到最优参数
+  - 如何高效的找到最优参数。
+    - 梯度下降法
+    - 牛顿法
+    - 最小二乘法
+    - EM 算法
 
 
 
@@ -123,27 +139,41 @@ Y ：{ 0 , 1 }
 
 $p(y=1|x) = y $         $p(y=0|x) = 1 - y $  
 
+合并成一个公式：$p(y|x)=y*p(y=1|x)+(1-y)*p(y=0|x)$
+
 ### 模型
 
 $$
 y = f(wx) = \frac{1}{1+e^{-wx}}
 $$
 
-$ wx = w_1 * 是否全匹配 + w_2 * 匹配度 + w_3 * 粉丝数 + w_4 * 股票状态 + w_5 * 股票近期热度 $
+$  wx = w_1 * 是否全匹配 + w_2 * 匹配度 + w_3 * 粉丝数 + w_4 * 股票状态 + w_5 * 股票近期热度 $
+
+$wx \in (-\infty ,+\infty)$
+
+$f(wx) \in (0,1)$
+
+sigmoid 函数：$ f(x) = \frac{1}{1+e^{x}}$
 
 ![](images/sigmoid.jpg)
 
+sigmoid 函数优点
 
+1. 数据压缩能力，将数据压缩至 （0 , 1）
+2. 处处连续，便于求导。
+3. 两端不灵敏，分界面处灵敏。
 
 ### 策略
 
-假设：样本$(x_i,y_i)$ 独立
+极大似然估计
 
-- 负对数似然
+假设：样本$(x_i,y_i)$ 独立同分布
 
-  $L(w) = -\sum_i{y_i*log(p(y_i=1|x_i,w))+(1-y_i)*log(p(y_i=0|x_i,w))}$
+每一个样本就是一个时间，整个样本集中事情同时发生的概率是：$\prod_i{p(x_i)}$    ，独立事件。
 
-  $=-\sum_i{(y_i*log(f(wx_i))+(1-y_i)log(1-f(wx_i)))}$
+似然函数：$F(w) = \prod_i{f(wx_i)}= \prod_i{[y_i*p(y_i=1|x_i,w)+(1-y_i)*p(y_i=0|x_i,w)]}$
+
+
 
 $y_i \in \{0,1\}$ 
 
@@ -153,9 +183,17 @@ $y_i \in \{0,1\}$
 
 在数据集上，先 log 然后求和，越大越好。
 
+
+
+- 损失函数
+
+  $L(w) = -\sum_i{[y_i*log(p(y_i=1|x_i,w))+(1-y_i)*log(p(y_i=0|x_i,w))]}$
+
+  $=-\sum_i{(y_i*log(f(wx_i))+(1-y_i)log(1-f(wx_i)))}$
+
 ### 算法
 
-最小化负对数似然函数
+最小化损失函数
 
 $L(w) = -\sum_i{(y_i*log(f(wx_i))+(1-y_i)log(1-f(wx_i)))}$
 
@@ -163,27 +201,27 @@ $L(w) = -\sum_i{(y_i*log(f(wx_i))+(1-y_i)log(1-f(wx_i)))}$
 
 #### 梯度下降法
 
-梯度
-
-$\nabla L(w) = -\sum(y_i-f(wx_i))*x_i$
+梯度：$\nabla L(w) = -\sum_i(y_i-f(wx_i))*x_i$
 
 
+
+$y = f(wx) = \frac{1}{1+e^{-wx}}$
 
 目标：最小化 L(w)
 
 步骤：
 
-1. 设置初始 w ，计算 L(w)
+1. 设置初始 w （随机数），计算 L(w)
 
 2. 计算梯度：$ d = \nabla L(w)$
 
    下降方向：$dir = -\nabla L(w) $
 
-3. $w^{new} = w + dir$
+3. $w^{new} = w + \lambda * dir$      $\lambda$ ：步长。
 
 4. 计算 $L(w^{new})$
 
-5. 如果 $L(w^{new}) - F(w)$ 较小，停止；跳转到 2 。
+5. 如果 $L(w) - L(w^{new})$ 较小（收敛条件）或者达到轮数限制，停止；跳转到 2 。
 
 
 
@@ -195,7 +233,7 @@ $$L(w)=-\sum_i{ ( y_i * log( f( wx_i )) + (1-y_i) log( 1-f(wx_i)))}$$
 
 $=-\sum_i{ y_i log( \frac{1}{1+e^{ -wx_i }} )+(1-y_i)log( 1 - \frac{1}{1+e^{ -wx_i }} ) }$
 
-$令 a = e^{-wx}$
+令：$ a = e^{-wx}$
 
 $=-\sum_i{ y_i log( \frac{1}{1+a} )+(1-y_i)log( 1 - \frac{1}{1+a} ) }$
 
@@ -219,9 +257,15 @@ $=-\sum_i{ y_i(wx_i)-log(1+e^{wx_i}) }$
 
 $\nabla L(w) =-\sum_i{ y_ix_i-(\frac{1}{1+e^{wx_i}})*e^{wx_i}x_i) } $
 
-$=-\sum_i{ x_i(y_i-\frac{1}{1+e^{wx_i}})}$
+$=-\sum_i{ x_i(y_i-\frac{e^{wx_i}}{1+e^{wx_i}})}$
+
+$=-\sum_i{ x_i(y_i-\frac{1}{1+e^{-wx_i}})}$
 
 $=-\sum_i{ x_i(y_i-f(wx_i))}$
+
+
+
+![](../ml/理论/images/20200818101259.jpg)
 
 #### 牛顿法
 
@@ -233,21 +277,56 @@ Hession 矩阵：$\nabla \nabla L(w) = \sum_i {f(wx_i)(1-f(wx_i))x_ix_i^T }$
 
 ## 正则化框架
 
+###  过拟合与欠拟合
+
+![](images/timg.jpeg)
+
+误差：模型预测结果与样本真实结果之间的差异。
+
+训练误差（经验误差）：模型预测在训练集上的误差。
+
+泛化误差：模型在新样本上的误差。
+
+我们希望获得泛化误差较小的模型。
+
+
+
+过拟合：训练误差非常小，将训练样本自身的一些特点，当作了所有潜在样本都会具有的一般性质了，这样就会导致泛化能力下降。
+
+欠拟合：对训练样本的一般性质尚未学好。
+
+
+
 ![](images/20200816211617.jpg)
+
+
+
+应对欠拟合：
+
+- 增加训练的轮数。
+- 训练集数据不够，补充训练集。
+- 提高特征刻画能力。
+
+缓解过拟合
+
+- 加正则化项。
+- 通过交叉验证（度量泛化误差）。
+
+
 
 目的：提高模型的泛化能力。控制模型复杂度。
 
 奥卡姆剃刀：如无必要，勿增实体。
 
-![](images/20200816212102.jpg)
+
 
 正则化框架
 
-$min L(w) + \lambda r(w)$
+$min_w L(w) + \lambda r(w)$
 
-L(w) 为经验损失，越小表示训练数据上拟合程度越高。
+L(w) ：经验损失，越小表示训练数据上拟合程度越高。
 
-$\lambda $：这种因子
+$\lambda $：折中因子
 
 r(w)：正则化项，越小表示模型复杂度越小。
 
@@ -343,10 +422,12 @@ class SugRank:
         self.model = LR(penalty="l2", solver="liblinear", C=0.2, max_iter=1000)
     
     def train(self, fileName):
+        # 加载训练数据
         x = []
         y = []
+        # 特征选择时使用
         feature_selector = set(range(100)) - set([])
-
+				
         for line in open(fileName, "r"):
             try:
                 data = line.strip().split(",")
@@ -355,10 +436,59 @@ class SugRank:
                 x.append(x_feature)
             except Exception as e:
                 print("load data:", line, e)
+        # 训练
         self.model = self.model.fit(x, y)
+        # 导出模型
         self.w = self.model.coef_[0]
         self.b = self.model.intercept_[0]
 ```
+
+
+
+**模型评估**
+
+混淆矩阵适用于：二分类问题。
+
+如果是多分类，转换成二分类问题。
+
+一级指标：
+
+- TP( True Postive )：真实值是 postive , 模型预测是 postive 的样本数。真阳性
+
+- FN( False Negative )：真实值是 postive , 模型预测是 negative 的样本数。假阴性
+
+- FP( False Postive )：真实值是 Negative , 模型预测是 postive 的样本数。假阳性
+
+- TN( True Negative )：真实值是 Negative , 模型预测是 negative 的样本数。真阴性
+
+对角线上数据值（TP，TN）越大越好。
+
+|            | 预测值 = 1 | 预测值 = 0 |
+| ---------- | ---------- | ---------- |
+| 真实值 = 1 | TP         | FN         |
+| 真实值 = 0 | FP         | TN         |
+
+二级指标
+
+- 准确率（Accuracy）= $\frac{TP+TN}{TP+TN+FP+FN}$ --- 针对整个模型
+
+- 精确率( precision ) = $ \frac{TP}{TP+ FP}$  --- 针对某一类别预测精确率
+
+- 召回率( recall ) = $\frac{TP}{TP+FN}$   --- 针对某一类别真实数据召回情况
+
+- 特异度( specificity ) = $\frac{TN}{TN+FP}$
+
+
+
+三级指标
+
+- F1-值(  F1-score )  = $ \frac{2PR}{P+R} =\frac{2*TP}{2*TP+FP+FN}$ ：精确率和召回率的调和平均数。
+
+P：precision
+
+R：recal
+
+更复杂评价指标：ROC 曲线和 AUC 值
 
 
 
@@ -408,50 +538,7 @@ plt.legend(loc=4)
 plt.show()
 ```
 
-**混淆矩阵**
 
-混淆矩阵适用于：二分类问题。
-
-如果是多分类，转换成二分类问题。
-
-一级指标：
-
-- TP( True Postive )：真实值是 postive , 模型预测是 postive 的样本数。真阳性
-
-- FN( False Negative )：真实值是 postive , 模型预测是 negative 的样本数。假阴性
-
-- FP( False Postive )：真实值是 Negative , 模型预测是 postive 的样本数。假阳性
-
-- TN( True Negative )：真实值是 Negative , 模型预测是 negative 的样本数。真阴性
-
-对角线上数据值（TP，TN）越大越好。
-
-|            | 预测值 = 1 | 预测值 = 0 |
-| ---------- | ---------- | ---------- |
-| 真实值 = 1 | TP         | FN         |
-| 真实值 = 0 | FP         | TN         |
-
-二级指标
-
-- 准确率（Accuracy）= $\frac{TP+TN}{TP+TN+FP+FN}$ --- 针对整个模型
-
-- 精度( precision ) = $ \frac{TP}{TP+ FP}$  ---针对某一类别预测精度
-
-- 召回( recall ) = $\frac{TP}{TP+FN}$   ---针对某一类别真实数据召回情况
-
-- 特异度( specificity ) = $\frac{TN}{TN+FP}$
-
-
-
-三级指标
-
-- F1-值(  F1-score )  = $ \frac{2PR}{P+R} =\frac{2*TP}{2*TP+FP+FN}$
-
-P：precision
-
-R：recal
-
-更复杂评价指标：ROC 曲线和 AUC 值
 
 ![](images/20200816220752.jpg)
 
@@ -465,25 +552,33 @@ R：recal
 
 新增特征：query 下 stock 的点击率
 
+$rate = \frac{queryStockClickCount}{queryClickCount}$
+
 ![](images/image2020-6-30_15-26-29.png)
 
 ## 在线排序
 
-在线系统架构图
+### 系统架构图
+
+$y = f(wx) = \frac{1}{1+e^{-wx}}$
+
+
 
 ![](images/image2020-6-30_14-13-59.png)
 
 
 
-特征工程
+### 在线智能排序
+
+![](images/20200817185537.jpg)
+
+
+
+### 特征工程
 
 ![](images/image2020-6-30_15-24-56.png)
 
-在线智能排序
-
-![](images/image2020-6-30_15-31-26.png)
-
-评测
+### 评测
 
 [AIBO 大数据平台](http://aibo.inter.snowballfinance.com/panel/details/321)
 
@@ -497,4 +592,6 @@ $MRR = \frac{1}{|click|} \sum_i^{|click|}{\frac{1}{rank_i}}$
 
 
 
-badcase 自动发现
+### badcase 自动发现
+
+![](images/20200817202008.jpg)
