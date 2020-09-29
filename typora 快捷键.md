@@ -52,6 +52,10 @@ $\nabla$ $\Delta$ $\rightarrow$ $\uparrow$ $\downarrow$ $\leftarrow$ $\Uparrow$ 
 
 
 
+$\mu ,\sigma ,\lambda \;, \pi \;, \varepsilon \; , \eta \;, \alpha \;, \beta , \theta$
+
+
+
 
 
 
