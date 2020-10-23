@@ -327,6 +327,59 @@ ISODATA 算法非常直观，但是多了几个超参数，对这些超参数调
 
 
 
+```python
+    # 训练
+    def train(self, train_data, min_n, sigma, min_distance, k0=10, max_iter=300):
+        last_wcss = 0.0
+        iter_count = 0
+        centorids = np.array([train_data[i] for i in sample(range(len(train_data)), k0)])
+
+        k = k0
+        print("kmeans train start:", centorids)
+        while True:
+            labels = [[] for _ in range(k)]
+            # 聚类
+            wcss = self.cluster(train_data, range(len(train_data)), centorids, labels)
+
+            # 判断每个类中样本数目是否小于 N_{min}。如果小于 N_{min} 则需要丢弃该类，
+            # 令 K = K - 1 ，并将该类中样本重新分配给剩下类中距离最小的类。
+            i = 0
+            while i < len(labels):
+                if len(labels[i]) < min_n:
+                    remove_labels = labels[i]
+                    labels = [item for h, item in enumerate(labels) if i != h]
+                    centorids = [item for h, item in enumerate(centorids) if i != h]
+                    self.cluster(train_data, remove_labels, centorids, labels)
+                i += 1
+            k = len(centorids)
+
+            print("kmeans wcss:", wcss, iter_count)
+
+            # modify centers
+            for cluster_id in range(k):
+                centorids[cluster_id] = self.calc_centroid(train_data, labels[cluster_id])
+
+            # 分裂
+            if k <= k0 / 2:
+                self.split(train_data, labels, centorids, sigma, min_n)
+                k = len(centorids)
+
+            # 合并
+            if k >= 2 * k0:
+                print("merge")
+                self.merge(centorids, min_distance, labels)
+                k = len(centorids)
+
+            iter_count += 1
+            if last_wcss == wcss or iter_count == max_iter: break
+
+            last_wcss = wcss
+```
+
+
+
+
+
 **合并**
 
 1. 计算质心之间两两之间的距离，用矩阵 D 表示，其中 $D(i,i) = 0$
@@ -335,19 +388,64 @@ ISODATA 算法非常直观，但是多了几个超参数，对这些超参数调
 
    $n_i\;,\;n_j$ 表示两个类别中样本数目，新的质心可以看做两个质心的加权求和。如果其中一个类所包含的样本个数较多，所合成的新质心就会更加偏向它。
 
+```python
+    # 合并
+    def merge(self, centorids, min_distance, lables):
+        k = len(centorids)
+        for i in range(k):
+            for j in range(i + 1, k):
+              	# 计算质心之间的距离
+                distance = self.calc_distance(centorids[i], centorids[j])
+                if distance < min_distance:
+                    n_i = len(lables[i])
+                    n_j = len(lables[j])
+                    # 两个质心合并为一个质心
+                    c_new = [(n_i * centorids[i][k] + n_j * centorids[j][k]) / (n_i + n_j) for k in
+                             range(len(centorids[i]))]
+
+                    centorids = [item for h, item in enumerate(centorids) if i != h and h != j]
+                    centorids.append(c_new)
+
+                    data = lables[i] + lables[j]
+                    lables = [item for h, item in enumerate(lables) if i != h and h != j]
+                    lables.append(data)
+```
+
+
+
 **分裂**
 
 1. 计算每个类别下所有样本在每个维度下的方差：$s^2 = \frac{(M-x_1)^2+(M-x_2)^2+...+(M-x_n)^2}{n}$。
-
 2. 针对每个类别的所有方差挑选出最大的方差 $\sigma_{max}$。
-
 3. 如果某个类别的   $\sigma_{max}> Sigma$ 并且该类别包含样本数 $n_i >= 2n_{min}$ ，则可以分裂。
-
 4. 满足步骤 3 中条件，分裂中两个子类并令 K = K + 1. $c_i^{(+)}=c_i+\sigma_{max}\;,\; c_i^{(-)}=c_i-\sigma_{max}$
-
 5. 将类中样本重新划分中 $c_i^{(+)}\;,\;c_i^{(-)}$ 中。
 
-   
+```python
+    # 分裂
+    def split(self, train_data, lables, centorids, sigma, min_n):
+        for i in range(len(lables)):
+            data = [train_data[j] for j in lables[i]]
+						# 计算最大方差
+            max_sigma = max(np.var(data, axis=0))
+            if not (max_sigma > sigma and len(lables[i]) >= 2 * min_n):
+                continue
+            # 新质心
+            c_new_0 = [v + max_sigma for v in centorids[i]]
+            c_new_1 = [v - max_sigma for v in centorids[i]]
+            tmp_lables = [[], []]
+            # 重新分类
+            self.cluster(train_data, lables[i], [c_new_0, c_new_1], tmp_lables)
+						
+            # 跟新质心和聚类
+            centorids = [item for j, item in enumerate(centorids) if i != j]
+            centorids.append(c_new_0)
+            centorids.append(c_new_1)
+
+            lables = [item for j, item in enumerate(lables) if i != j]
+            lables.append(tmp_lables[0])
+            lables.append(tmp_lables[1])
+```
 
 
 
