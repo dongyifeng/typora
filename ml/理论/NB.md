@@ -44,7 +44,7 @@ $p(y_i) = \frac{Count(y_i)}{\sum_j{Count(y_j)}}$
 $P(x_i|y_j)=\frac{Count(x_i,y_j)}{Count(y_j)}$
 
 - $Count(x_i,y_j)$：特征 $ x_i$ 和类别 $y_j$ 在训练集中同时出现的次数。
-- Count(y_j)：训练集中属于类别 $y_j$ 的样本数。
+- $Count(y_j)$：训练集中属于类别 $y_j$ 的样本数。
 
 
 
