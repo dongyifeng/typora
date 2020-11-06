@@ -48,11 +48,11 @@ sequenceDiagram
 
 常见符号：
 
-$\nabla$ $\Delta$ $\rightarrow$ $\uparrow$ $\downarrow$ $\leftarrow$ $\Uparrow$ $\Downarrow$ $\Leftarrow$ $\Rightarrow$ $\Updownarrow$ $\Leftrightarrow$  $\leftrightarrow$ $\longrightarrow$
+$\nabla$ $\Delta$ $\rightarrow$ $\uparrow$ $\downarrow$ $\leftarrow$ $\Uparrow$ $\Downarrow$ $\Leftarrow$ $\Rightarrow$ $\Updownarrow$ $\Leftrightarrow$  $\leftrightarrow$ $\longrightarrow \approx$
 
 
 
-$\mu ,\sigma ,\lambda \;, \pi \;, \varepsilon \; , \eta \;, \alpha \;, \beta , \theta$
+$\mu ,\sigma ,\lambda \;, \pi \;, \varepsilon \; , \eta \;, \alpha \;, \beta , \theta ,\hat a ,\widehat a,\overline a ,\widetilde a, \dot a,\ddot a$
 
 
 
