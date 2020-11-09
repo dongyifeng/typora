@@ -2,6 +2,10 @@
 
 [TOC]
 
+# 问题
+
+​		搜索系统想优化长尾query。
+
 # K-means
 
 ## 聚类概念
@@ -465,3 +469,4 @@ awk -F"," '{ if(NR==1){ for(i=1;i<=NF;i++){ d[$i]=1  };print "center,query_id,qu
 awk -F"," '{ if($1==9){ print $0  }  }' query_rvy_uniq_seg_filter_model | more
 ```
 
+# query 聚类
