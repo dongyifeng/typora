@@ -52,7 +52,7 @@ $\nabla$ $\Delta$ $\rightarrow$ $\uparrow$ $\downarrow$ $\leftarrow$ $\Uparrow$ 
 
 
 
-$\mu ,\sigma ,\lambda \;, \pi \;, \varepsilon \; , \eta \;, \alpha \;, \beta , \theta ,\hat a ,\widehat a,\overline a ,\widetilde a, \dot a,\ddot a$
+$\mu ,\sigma ,\lambda \;, \pi \;, \varepsilon \; , \eta \;, \alpha \;, \beta , \theta ,\hat a ,\widehat a,\overline a ,\widetilde a, \dot a,\ddot a ,\epsilon,\Omega ,\omega$
 
 
 
