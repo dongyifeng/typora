@@ -32,7 +32,7 @@
 
 ​		
 
-​		造成大家的分组不一样，是因为老师没有给定分组规则。
+为什么造成大家的分组不一样？是因为老师没有给明确定分组规则。
 
 
 
@@ -40,11 +40,11 @@
 
 无监督学习不需要标注数据。
 
-有监督学习需要标注数据。NB，LR，
+有监督学习需要标注数据。NB，LR。
 
 
 
-聚类：将数据划分到不同的类里，使相似的数据在同一类里，不相似的数据在不同的类里。
+聚类：将数据划分到不同的类里，使相似（距离相近）的数据在同一类里，不相似（距离较远）的数据在不同的类里。
 
 ![](images/20200924203328.jpg)
 
@@ -137,7 +137,7 @@ $dist(x,y)=\sqrt{{(x_1-x_2)^2+(y_1-y_2)^2}}$
 
 跟新绿色质心：$[\frac{x_1+x_2+x_3+x_4}{4},\frac{y_1+y_2+y_3+y_4}{4}]$
 
-
+<font color=red>**注意：此时的质心是虚拟的点（不是训练集中的样本）**</font>
 
 ![](images/20200924200846.jpg)
 
@@ -494,5 +494,526 @@ K-Means 和 K-Means++ 质心个数 K 是固定不变的。ISODATA 算法通过�
 
 # query 聚类
 
-## query 相似性
+## query 相似度
+
+### One Hot Encoding
+
+![](images/20201112093313.jpg)
+
+$dist(X,Y) = \sqrt{\sum_{i=1}^n{(x_i-y_i)^2}}$
+
+要计算 query 与 query 的欧式距离，需要将 query 表达成高维空间中一个点。通过 One Hot Encoding。
+
+
+
+One Hot Encoding 例子：
+
+```python
+from sklearn.preprocessing import OneHotEncoder
+
+# handle_unknown='ignore' 忽略在 fit 中没有见过的特征值
+enc = OneHotEncoder(handle_unknown='ignore')
+
+X = [['Male', 1], ['Female', 3], ['Female', 2]]
+# 生成词表
+enc.fit(X)
+# one-hot 编码
+enc.transform([['Female', 1], ['Male', 4]]).toarray()
+# 如果嫌fit 后在transform 麻烦，可以使用：enc.fit_transform(X)
+```
+
+
+
+![](images/20201112101403.jpg)
+
+
+
+$dist(X,Y) = \sqrt{\sum_{i=1}^n{(x_i-y_i)^2}}$
+
+$dist(query_1,query_2) = \sqrt{1^2+1^2+1^2+1^2+1^2+1^2+0+...+0}=\sqrt{6}$
+
+$dist(query_1,query_3) = \sqrt{1^2+1^2+0^2+1^2+1^2+0+...+0}=\sqrt{4}$
+
+$\sqrt{6}>\sqrt{4}$   所以query_1 与 query_3 距离更短，更相似。这与我们感觉不相符？Why？
+
+因为：One Hot Encoding 认为维度与维度是独立的，会造成信息的丢失。
+
+query 本身就很短，信息量很少，我们要充分利用这些少的可怜的信息，不能再独立的假设了。
+
+如何 -> 怎么  -> 0 -> ?
+
+投资 -> 买     -> 0 -> ?
+
+美股 -> 港股 -> 0 -> ?
+
+怎么办计算词与词的相似度（距离）？
+
+### word2vec
+
+$dist(X,Y) = \sqrt{\sum_{i=1}^n{(x_i-y_i)^2}}$
+
+![](images/20201112110854.jpg)
+
+![](images/20201112112922.jpg)
+
+
+
+训练 word2vec 模型
+
+```shell
+nohup word2vec -train train_data_file_name -output vec_model_file_name -size 100 -window 5 -sample 1e-3 -negative 5 -hs 0 -binary 0 -cbow 1 -iter 5 &
+```
+
+参数说明：
+
+- train：语料集，建议使用 BrownCorpus , Text8Corpus 或 ·ineSentence 构建。
+- output：模型文件名
+- size：是指特征向量的维度，默认为100。大的size需要更多的训练数据,但是效果会更好. 推荐值为几十到几百。
+- window：表示当前词与预测词在一个句子中的最大距离是多少。Harris 在 1954 年提出的分布假说( distributional hypothesis)指出， 一个词的词义由其所在的上下文决定。所以word2vec的参数中，窗口设置一般是5，而且是左右随机1-5（小于窗口大小）的大小，是均匀分布,随机的原因应该是比固定窗口效果好，增加了随机性，个人理解应该是某一个中心词可能与前后多个词相关，也有的词在一句话中可能只与少量词相关（如短文本可能只与其紧邻词相关）。
+- sample：高频词汇的随机降采样的配置阈值，默认为1e-3，范围是(0,1e-5)。
+- negative：如果>0,则会采用negativesamp·ing，用于设置多少个noise words。
+- hs：如果为1则会采用hierarchica·softmax技巧。如果设置为0（defau·t），则negative sampling会被使用。
+- binary：为1指的是结果二进制存储，为0是普通存储。
+- cbow：如果为0，则采用上下文词向量的和，如果为1（defau·t）则采用均值。只有使用CBOW的时候才起作用。
+- iter： 迭代次数，默认为 5。
+
+**训练数据**
+
+- 雪球帖子数据：1.3G，700838 条 + 用户( 1894299685 )的所有帖子 +用户( 5507081370 ) 的长帖
+- 维基百科数据：1.2 G，372433 条
+- 智齿系统用户反馈问题数据：544 条
+
+
+
+有了 word 与 word 之间相似度，怎么计算 query 与 query 的相似度？
+
+第一版：选择词相关性最大分值，求和。
+
+![](images/20201112143038.jpg)
+
+
+
+第二版：添加词性约束
+
+问题：[买 , 港股] 相关性最大。预期是：[买 , 投资] 的分值
+
+![](images/20201112143631.jpg)
+
+
+
+新增词性约束
+
+![](images/20201112144308.jpg)
+
+
+
+第三版：扩展核心词，动宾结构，句式结构，有股票名称新增：xx_stock
+
+![](images/20201112145941.jpg)
+
+处理完毕的 query
+
+![](images/20201112150323.jpg)
+
+
+
+相同句式的 query
+
+![](images/20201112150627.jpg)
+
+query  与 query 相似度代码：
+
+```python
+    def similarity_sentence(self, sentence1, sentence2):
+        similarity = 0.0
+        for word in sentence1:
+            max_word, max_score = self.max_word(word, sentence2)
+            similarity += max_score
+        return similarity / len(sentence1)
+
+    def max_word(self, word, sentence):
+        max_score = 0
+        max_word = ""
+        w, p = word
+        for w2, p2 in sentence:
+            if p2 != p: continue
+            score = self.similarity_word(w, w2)
+            if score is None: continue
+            if max_score < score:
+                max_score = score
+                max_word = w2
+        return (max_word, max_score)
+
+    def similarity_word(self, word1, word2):
+        if word1 not in self.word2vec_model.keys():
+            self.log.write(word1 + " not in model\n")
+            return
+        if word2 not in self.word2vec_model.keys():
+            self.log.write(word2 + " not in model\n")
+            return
+        vec1 = self.word2vec_model[word1]
+        vec2 = self.word2vec_model[word2]
+
+        prod = 0
+        mod1 = 0
+        mod2 = 0
+
+        for i in range(min(len(vec2), len(vec2))):
+            prod += vec1[i] * vec2[i]
+            mod1 += vec1[i] * vec1[i]
+            mod2 += vec2[i] * vec2[i]
+
+        return prod / (math.sqrt(mod1) * math.sqrt(mod2))
+```
+
+
+
+至此能够按照业务想要的方式计算 query 与 query 的相关性。
+
+问题：怎么将定制相关性计算，融合到 KMeans 中？
+
+
+
+## 定制 KMeans
+
+KMeans 核心步骤：
+
+1. 重新对样本划分类别：计算每个样本 $x_i$ ，计算它到每一个质心的距离，将其分配到距离最小质心所对应的类中。
+2. 重新计算每个质心。$c_i = \frac{1}{|c_i|}\sum_{x \in c_i}x$
+
+
+
+### 替换距离计算
+
+将第一步中距离计算，替换为query 与 query 相似度计算。
+
+
+
+### 虚质心改为实质心
+
+计算质心麻烦：质心是虚拟的点（不是样本点），无法找到质心对应词，没有词就没有办法通过word2vec 计算词与词的距离，进而无法计算 query 与质心的距离（相似度）。
+
+
+
+例如：绿色类中点：$A:[x_1,y_1] \,, B:[x_2,y_2]\,,C:[x_3,y_3]\,,D:[x_4,y_4]$
+
+跟新绿色质心：$[\frac{x_1+x_2+x_3+x_4}{4},\frac{y_1+y_2+y_3+y_4}{4}]$
+
+<font color=red>**注意：此时的质心是虚拟的点（不是训练集中的样本）**</font>
+
+
+
+**解决方案：强制让质心是训练集中的样本点。**
+
+问题：在一个类别，选择哪一个样本点作为质心？
+
+答：最靠近中心的样本点，最为质心最合适。
+
+问题：怎么选出来最靠近中心的样本点？或者说最靠近中心的样本点有什么特征？
+
+答：在一个类别中，计算每个样本点到其他样本点的距离之和，最靠近中心的样本点距离之和最小。
+
+![](images/20200928102339.jpg)
+
+
+
+```python
+     # 计算质心
+     def calc_centroid(self, data):
+         max_wcss = -100
+         result = -1
+
+         for i in data:
+             wcss = 0
+             for j in data:
+                 wcss += self.similarity_map[(i, j)]
+             if max_wcss < wcss:
+                 result = i
+                 max_wcss = wcss
+         return result
+```
+
+注意：时间复杂度为：$O(n^2)$。在训练之前计算所有 query 与 query 的相似度保存在字典中，后续所有用到地方，直接获取。
+
+
+
+
+
+### 其他改进
+
+1. 实现了KMeans ++ ：优化质心初始化。
+2. 加入质心过滤规则：query 小于 3个词，大于10个词，不包含一个动词和一个名词。
+3. 多轮迭代聚类：指定一个最小相似度（min_similarity），一次聚类完成后，自动将相似度小于 min_similarity 的样本过滤出来，进行下一次的聚类。
+
+完整代码：
+
+```python
+# coding:utf-8
+
+# kmeans 对 query 聚类：自定义 query 与 query 的相似度。
+# query 与 query 的相似度：sum(word2vec * word2vec)
+
+import math
+from random import sample
+
+class MyKmeans:
+    def __init__(self, train_data_file_name, n_clusters=10, max_iter=300,min_similarity=0.5):
+        self.n_clusters = n_clusters
+        self.max_iter = max_iter
+        self.word2vec_model = None
+        self.train_data = {}
+        self.similarity_map = None
+        self.centers = []
+        self.labels = set()
+        self.dir_path = "./"
+        self.train_file_name = train_data_file_name
+        self.log = open(self.dir_path + train_data_file_name + "_log.log", "w")
+        self.centers_black_list = set()
+        self.min_similarity = min_similarity
+
+        print('kmeans loading word2vec model')
+        self.load_word2vec_model(self.dir_path + "vec_model_v3")
+        print('kmeans loaded word2vec model')
+
+        print('kmeans loading train data')
+        self.load_train_data(self.dir_path + self.train_file_name)
+        print('kmeans loaded train data')
+        self.init_center()
+
+    def __del__(self):
+        self.log.close()
+
+    def load_word2vec_model(self, model_file_name):
+        model = {}
+        for line in open(model_file_name, "r"):
+            try:
+                data = line.strip().split(" ")
+                if len(data) < 2: continue
+                model[data[0]] = [float(x) for x in data[1::]]
+            except Exception as err:
+                print(err, line)
+        self.word2vec_model = model
+
+    # 数据格式：
+    # 如何/ryv 看盘/v
+    def load_train_data(self, file_name):
+        train_data = {}
+        i = 0
+        for line in open(file_name):
+            try:
+                train_data[i] = [(item.strip().split("/")[0], item.strip().split("/")[1]) for item in line.strip().split(" ") if
+                     len(item) > 0 and len(item.strip().split("/")) > 1]
+                i += 1
+            except Exception as err:
+                print(err, line, "kmeans")
+        self.train_data = train_data
+
+    def init_center(self):
+        center_black_list = set()
+        for sid,item in self.train_data.items():
+            if len(item) < 3 or len(item)>10:center_black_list.add(sid)
+            pos_tag_v = [(w,p) for w,p in item if p == "v"  ]
+            pos_tag_n = [(w,p) for w,p in item if p.find("n") == 0  ]
+            if len(pos_tag_v) == 0 or len(pos_tag_n) == 0:center_black_list.add(sid)
+        self.center_black_list = center_black_list
+        # 初始化质心
+        self.centers = sample( [ sid for sid,item in self.train_data.items() if sid not in center_black_list  ], self.n_clusters)
+
+    # 训练
+    def train(self,calc_similarity=False):
+        print("kmeans calc all similarity start")
+        if not self.similarity_map:
+            if calc_similarity:
+                self.calc_train_data_similarity()
+            else:
+                self.load_similarity_map()
+        last_wcss = 0.0
+        iter_count = 0
+        print("kmeans train start")
+        while True:
+            self.labels = set([[sid] for sid in self.centers])
+            wcss = 0
+            for sid,feature in self.train_data.items():
+                max_similarity = -100
+                cluster = -1
+                for i, centroid_id in enumerate(self.centers):
+                    if max_similarity < self.similarity_map[(sid, centroid_id)]:
+                        max_similarity = self.similarity_map[(sid, centroid_id)]
+                        cluster = i
+                self.labels[cluster].add(sid)
+                wcss += max_similarity
+
+            print("kmeans wcss:", wcss, iter_count)
+
+            # modify centers
+            for i in range(self.n_clusters):
+                new_centers = self.calc_centroid(self.labels[i])
+                if new_centers >= 0:
+                    self.centers[i] = new_centers
+
+            iter_count += 1
+            if last_wcss == wcss or iter_count == self.max_iter: break
+
+            last_wcss = wcss
+        print("kmeans train Over")
+
+    # 计算质心
+    def calc_centroid(self, data):
+        max_wcss = -100
+        result = -1
+
+        for sid in data:
+            if sid in self.center_black_list:continue
+            wcss = 0
+            for sid2 in data:
+                if sid2 in self.center_black_list:continue
+                wcss += self.similarity_map[(sid, sid2)]
+            if max_wcss < wcss:
+                result = sid
+                max_wcss = wcss
+        return result
+
+    def calc_train_data_similarity(self):
+        similarity_map = {}
+        k = 0
+        for sid,feature in self.train_data.items():
+            for sid2,feature2 in self.train_data.items():
+                k += 1
+                if k % 10000 == 0:
+                    print("kmeans calc_train_data_similarity:", k)
+                similarity_map[(sid, sid2)] = self.similarity_sentence(feature, feature2)
+        self.similarity_map = similarity_map
+        self.save_similarity()
+
+    def similarity_sentence(self, sentence1, sentence2):
+        similarity = 0.0
+        for word in sentence1:
+            max_word, max_score = self.max_word(word, sentence2)
+            similarity += max_score
+        return similarity / len(sentence1)
+
+    def max_word(self, word, sentence):
+        max_score = -1.0
+        max_word = ""
+        w, p = word
+        for w2, p2 in sentence:
+            if p2 != p: continue
+            score = self.similarity_word(w, w2)
+            if score is None: continue
+            if max_score < score:
+                max_score = score
+                max_word = w2
+        return (max_word, max_score)
+
+    def similarity_word(self, word1, word2):
+        if word1 == word2:
+            return 1.0
+        if word1 not in self.word2vec_model.keys():
+            self.log.write(word1 + " not in model\n")
+            return
+        if word2 not in self.word2vec_model.keys():
+            self.log.write(word2 + " not in model\n")
+            return
+        vec1 = self.word2vec_model[word1]
+        vec2 = self.word2vec_model[word2]
+
+        prod = 0
+        mod1 = 0
+        mod2 = 0
+
+        for i in range(min(len(vec2), len(vec2))):
+            prod += vec1[i] * vec2[i]
+            mod1 += vec1[i] * vec1[i]
+            mod2 += vec2[i] * vec2[i]
+
+        return prod / (math.sqrt(mod1) * math.sqrt(mod2))
+
+    def save_model(self,i):
+        fw_next_train_data = open(self.dir_path + self.train_file_name+"_train_data_"+str(i),"w")
+        fw = open(self.dir_path + self.train_file_name + "_model_"+str(i), "w")
+        # 存质心
+        fw.write(",".join([str(x) for x in self.centers]) + "\n")
+
+        # 存分类
+        for i in range(len(self.labels)):
+            fw.write(str(self.labels[i]) + "\n")
+
+        next_train_data = {}
+        for label in range(len(self.labels)):
+            for score,sid in sorted([ (self.similarity_map[(self.centers[label],sid)],sid) for sid in self.labels[label]  ],reverse=True):
+                if score < self.min_similarity:
+                    fw_next_train_data.write(" ".join([ w+ "/"+p for w,p in self.train_data[sid] ]  )+"\n")
+                    next_train_data[sid] = self.train_data[sid]
+                else:
+                    fw.write(str(label)+","+str(sid)+","+str(score)+","+str(self.train_data[sid])+"\n")
+
+        self.train_data = next_train_data
+        fw.close()
+        fw_next_train_data.close()
+
+    def save_similarity(self):
+        fw = open(self.dir_path + self.train_file_name + "_similarity", "w")
+        for k, v in self.similarity_map.items():
+            fw.write(str(k) + "," + str(v) + "\n")
+        fw.close()
+
+    # (1531, 3553),-0.2741255043304492
+    def load_similarity_map(self):
+        similarity_map = {}
+        for line in open(self.dir_path + self.train_file_name + "_similarity", "r"):
+            data = line.replace('(','').replace(')','').replace(' ','').strip().split(',')
+            if len(data) != 3:continue
+            similarity_map[(int(data[0]),int(data[1]))] = float(data[2])
+        self.similarity_map = similarity_map
+
+    def multi_iter_train(self):
+        print("第 0 轮 start")
+        self.train()
+        self.save_model(0)
+#        self.save_similarity()
+        print("第 0 轮 end")
+        for i in range(9):
+            print("第"+str(i+1)+" 轮 start")
+            if (len(self.train_data) - len(self.center_black_list)) <= self.n_clusters:break
+            self.init_center()
+            self.train()
+            self.save_model(i+1)
+            print("第"+str(i+1)+" 轮 start")
+
+my_kmeans = MyKmeans("all_query_3docker_uniq_rvn_text_seg_filter", n_clusters=100,min_similarity=0.4)
+my_kmeans.multi_iter_train()
+print("Over")
+```
+
+
+
+## 聚类结果
+
+股票的某一个指标怎么看
+
+![](images/20201112163852.jpg)
+
+
+
+最近行情为什么涨（跌）
+
+![](images/20201112164041.jpg)
+
+
+
+某一只股票为什么涨(跌)
+
+![](images/20201112164143.jpg)
+
+
+
+ 跟打新相关的操作![](images/20201112164251.jpg)
+
+
+
+# Q&A
+
+
+
+谢谢！
 
