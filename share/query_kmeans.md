@@ -609,7 +609,7 @@ nohup word2vec -train train_data_file_name -output vec_model_file_name -size 100
 
 第三版：扩展核心词，动宾结构，句式结构，有股票名称新增：xx_stock
 
-![](images/20201112145941.jpg)
+![](images/87.jpg)
 
 处理完毕的 query
 
