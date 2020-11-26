@@ -1,5 +1,353 @@
 [TOC]
 
+```python
+import pandas as pd
+from prometheus_client import metrics
+
+from sklearn.linear_model import LogisticRegression as LR
+
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+import xgboost as xgb
+import csv
+from sklearn.metrics import accuracy_score
+
+from sklearn.model_selection import GridSearchCV
+
+# 绘图
+import numpy as np
+import matplotlib.pyplot as plt
+
+from decimal import Decimal
+import warnings
+
+warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn", lineno=1978)
+
+
+def load_training_data(file_name, skip_frist=True):
+    with open(file_name, "r") as read_file:
+        if skip_frist: next(read_file)
+        reader = csv.reader(read_file)
+        X_train = []
+        y_train = []
+        for row in reader:
+            feature = []
+            for item in row[1:]:
+                try:
+                    feature.append(float(item))
+                except Exception as err:
+                    feature.append(item)
+
+            X_train.append(feature)
+            y_train.append(int(row[0]))
+
+    return (X_train, y_train)
+
+
+feature_selector = set(range(100))
+
+
+def XGBoost_adjust(X_train, y_train):
+    x_feature = []
+    for row in X_train:
+        x_feature.append([row[i] for i in range(len(row)) if i in feature_selector])
+
+    XGB = xgb.XGBClassifier(objective="binary:logistic", max_depth=6, n_estimators=12, learning_rate=0.35, gamma=5)
+
+    gsCv = GridSearchCV(XGB,
+                        {'max_depth': [1, 3, 6, 8, 10],
+                         'n_estimators': [10, 50, 100, 150]}, scoring='roc_auc')
+
+    gsCv.fit(pd.DataFrame(x_feature), y_train)
+
+    print(gsCv.best_score_)
+    print(gsCv.best_params_)
+
+
+def XGBoost_LR(X_train, y_train):
+    x_feature = []
+    for row in X_train:
+        x_feature.append([row[i] for i in range(len(row)) if i in feature_selector])
+
+    # data_train, data_test, target_train, target_test = train_test_split(x_feature, y_train, test_size=0.1,
+    #                                                                     random_state=300)
+    # XGB = xgb.XGBClassifier(objective="binary:logistic", max_depth=3, n_estimators=100)
+
+    # df_data = pd.concat([pd.DataFrame(x_feature), pd.DataFrame(y_train)], axis=1)
+
+    # X = df_data.values[:, :-1]
+    # y = df_data.values[:, -1]
+
+    X = x_feature
+    y = y_train
+
+    # X_head = [row[:13] for row in X]
+
+    print("len(x)", len(X_train))
+    print("len(y)", len(y_train))
+
+    # X_train_xgb, X_train_lr, y_train_xgb, y_train_lr = train_test_split(X_train,
+    #                                                                     y_train, test_size=0.75)
+
+    data_train, data_test, target_train, target_test = train_test_split(X, y, test_size=0.1, random_state=300)
+    # data_train_head = [row[:13] for row in data_train]
+    # data_test_head = [row[:13] for row in data_test]
+
+    XGB = xgb.XGBClassifier(objective="binary:logistic", max_depth=3, n_estimators=100)
+    model = XGB.fit(pd.DataFrame(X), y)
+
+    XGB.get_booster().dump_model("/Users/dongyf/dongyf/data/status_rank/model.txt",
+                                 fmap='/Users/dongyf/dongyf/data/status_rank/tmp_fmap')
+
+    print(XGB.score(pd.DataFrame(X), y))
+
+
+    # trees = model.get_booster().get_dump(fmap="/Users/dongyf/dongyf/data/status_rank/tmp_fmap", with_stats=True)
+
+    # for tree in trees:
+    #     print("tree",tree)
+    #
+    #
+    # print("len(trees)",dir(trees[0]))
+    #
+    # print('-'*1000)
+    #
+    # print("best_ntree_limit",model.get_booster().trees_to_dataframe(fmap="/Users/dongyf/dongyf/data/status_rank/tmp_fmap"))
+    # print('-'*1000)
+    #
+    # print("best_ntree_limit",model.get_booster().trees_to_dataframe(fmap="/Users/dongyf/dongyf/data/status_rank/tmp_fmap").describe())
+    #
+    # print("best_ntree_limit",model.get_booster().trees_to_dataframe(fmap="/Users/dongyf/dongyf/data/status_rank/tmp_fmap").info())
+    #
+    #
+    # print("best_ntree_limit",model.get_booster())
+    #
+    #
+    #
+    #
+    #
+    # print(XGB.score(pd.DataFrame(data_test_head), target_test))
+    #
+    #
+    # trees = [_ for _ in XGB.get_booster().booster()]
+    # print(XGB.get_num_boosting_rounds())
+    # print(dir(XGB._Booster))
+    #
+    # print("XGB_Featrue", XGB.apply(pd.DataFrame([X_head[0]])))
+    #
+    # print("XGB_Featrue", len(XGB.apply(pd.DataFrame([X_head[0]]))[0]))
+
+    # XGB.get_booster().dump_model("/Users/dongyf/dongyf/data/status_rank/model.txt",
+    #                              fmap='/Users/dongyf/dongyf/data/status_rank/tmp_fmap')
+
+    # print(len(X_train), len(y_train))
+    #
+    # gsCv = GridSearchCV(XGB,
+    #                     {'colsample_bytree': [0.7, 0.8, 0.9],
+    #                      'n_estimators': [100]})
+    #
+    # gsCv.fit(X_train, y_train)
+    #
+    # print(gsCv.best_score_)
+    # print(gsCv.best_params_)
+
+    # print("训练集特征数据为:\n", x_train)
+    # print("训练集标签数据为:\n", y_train)
+    # print("转化为叶子节点后的特征为：\n", XGB.apply(x_train, ntree_limit=0))
+
+    # XGB_enc = OneHotEncoder(categories='auto')
+    # XGB_enc.fit(XGB.apply(pd.DataFrame(X_head), ntree_limit=0))  # ntree_limit 预测时使用的树的数量
+
+    # XGB_LR = LR(solver="liblinear")
+
+    # XGB_LR.fit(XGB_enc.transform(XGB.apply(x_train)), y_train.astype('int'))
+    # X_predict = XGB_LR.predict_proba(XGB_enc.transform(XGB.apply(X_train)))[:, 1]
+
+    l1_train = []
+    l2_train = []
+    l1_test = []
+    l2_test = []
+
+
+'''
+
+
+    x_train_lr = XGB_enc.transform(XGB.apply(pd.DataFrame(data_train_head))).toarray()
+    y_train_lr = target_train
+
+    x_test_lr = XGB_enc.transform(XGB.apply(pd.DataFrame(data_test_head))).toarray()
+    y_test_lr = target_test
+
+    print("len(x_train_lr)", x_train_lr.shape)
+    print("len(x_test_lr)", x_test_lr.shape)
+
+    print(type(x_train_lr))
+
+    x_train_lr_hihi = []
+    for i in range(x_train_lr.shape[0]):
+        row = [item for item in x_train_lr[i]] + data_train[i][13:]
+        if len(x_train_lr_hihi)==0:
+            print(len(row))
+        x_train_lr_hihi.append(row)
+
+        # x_train_lr[i] = x_train_lr[i] + data_train[i][13:]
+
+    x_test_lr_hihi = []
+    for i in range(x_test_lr.shape[0]):
+        row = [item for item in x_test_lr[i]] + data_test[i][13:]
+        x_test_lr_hihi.append(row)
+        # x_test_lr[i] = x_test_lr[i] + data_test[i][13:]
+
+    print("len(x_train_lr)", len(x_train_lr_hihi[0]))
+    print("len(x_test_lr)", len(x_test_lr_hihi[0]))
+
+    #  print(len(x_test_lr[0]))
+
+    max_l1 = 0.0
+    max_l1_i = 0.0
+    max_l2 = 0.0
+    max_l2_i = 0.0
+
+    lrl1 = LR(penalty="l1", solver="liblinear", C=0.01)
+    lrl2 = LR(penalty="l2", solver="liblinear", C=0.01)
+    lrl1 = lrl1.fit(x_train_lr_hihi, y_train_lr)
+    lrl2 = lrl2.fit(x_train_lr_hihi, y_train_lr)
+
+    score_l1 = accuracy_score(lrl1.predict(x_test_lr_hihi), y_test_lr)
+    score_l2 = accuracy_score(lrl2.predict(x_test_lr_hihi), y_test_lr)
+    print("score_l1", score_l1)
+    print("score_l2", score_l2)
+
+    
+    for i in np.linspace(0.05, 1, 19):
+        lrl1 = LR(penalty="l1", solver="liblinear", C=i, max_iter=1000)
+        lrl2 = LR(penalty="l2", solver="liblinear", C=i, max_iter=1000)
+
+        lrl1 = lrl1.fit(x_train_lr, y_train_lr)
+        l1_train.append(accuracy_score(lrl1.predict(x_train_lr), y_train_lr))
+        score_l1 = accuracy_score(lrl1.predict(x_test_lr), y_test_lr)
+        l1_test.append(score_l1)
+
+        lrl2 = lrl2.fit(x_train_lr, y_train_lr)
+        l2_train.append(accuracy_score(lrl2.predict(x_train_lr), y_train_lr))
+        score_l2 = accuracy_score(lrl2.predict(x_test_lr), y_test_lr)
+        l2_test.append(score_l2)
+
+        if score_l1 > max_l1:
+            max_l1 = score_l1
+            max_l1_i = i
+        if score_l2 > max_l2:
+            max_l2 = score_l2
+            max_l2_i = i
+
+    print("l1:", max_l1, max_l1_i)
+    print("l2:", max_l2, max_l2_i)
+
+    graph = [l1_train, l2_train, l1_test, l2_test]
+    color = ["green", "black", "yellow", "red"]
+    label = ["l1_train", "l2_train", "l1_test", "l2_test"]
+
+    # 6*6 的画布
+    plt.figure(figsize=(6, 6))
+    for i in range(len(graph)):
+        plt.plot(np.linspace(0.05, 1, 19), graph[i], color[i], label=label[i])
+
+    plt.legend(loc=4)
+    plt.show()
+    '''
+
+
+# AUC_train = metrics.roc_auc_score(y_train.astype('int'), X_predict)
+#
+# print("AUC of train data is ", AUC_train)
+
+
+def training_lr(X_train, y_train):
+    data_train, data_test, target_train, target_test = train_test_split(X_train, y_train, test_size=0.1,
+                                                                        random_state=300)
+    l1_train = []
+    l2_train = []
+    l1_test = []
+    l2_test = []
+
+    max_l1 = 0.0
+    max_l1_i = 0.0
+    max_l2 = 0.0
+    max_l2_i = 0.0
+
+    # for i in np.linspace(0.05, 1, 19):
+    #     print(i)
+    #     # lrl1 = LR(penalty="l1", solver="liblinear", C=i, max_iter=1000)
+    #     lrl2 = LR(penalty="l2", solver="liblinear", C=i, max_iter=1000)
+    #
+    #     # lrl1 = lrl1.fit(data_train, target_train)
+    #     # l1_train.append(accuracy_score(lrl1.predict(data_train), target_train))
+    #     # score_l1 = accuracy_score(lrl1.predict(data_test), target_test)
+    #     # l1_test.append(score_l1)
+    #
+    #     lrl2 = lrl2.fit(data_train, target_train)
+    #     l2_train.append(accuracy_score(lrl2.predict(data_train), target_train))
+    #     score_l2 = accuracy_score(lrl2.predict(data_test), target_test)
+    #     l2_test.append(score_l2)
+    #
+    #     # if score_l1 > max_l1:
+    #     #     max_l1 = score_l1
+    #     #     max_l1_i = i
+    #     if score_l2 > max_l2:
+    #         max_l2 = score_l2
+    #         max_l2_i = i
+    #     print(i,score_l2)
+
+    lrl2 = LR(penalty="l2", solver="liblinear", C=0.2, max_iter=1000)
+    model = lrl2.fit(X_train, y_train)
+    print("w", ",".join([str(Decimal(i).quantize(Decimal('0.000000'))) for i in model.coef_[0]]))
+    print("len(w)", len(model.coef_[0]))
+
+    print("b", model.intercept_[0])
+
+    # print("l1:", max_l1, max_l1_i)
+    # print("l2:", max_l2, max_l2_i)
+    #
+    # graph = [l1_train, l2_train, l1_test, l2_test]
+    # color = ["green", "black", "yellow", "red"]
+    # label = ["l1_train", "l2_train", "l1_test", "l2_test"]
+    #
+    # # 6*6 的画布
+    # plt.figure(figsize=(6, 6))
+    # for i in range(len(graph)):
+    #     plt.plot(np.linspace(0.05, 1, 19), graph[i], color[i], label=label[i])
+    #
+    # plt.legend(loc=4)
+    # plt.show()
+
+
+if __name__ == "__main__":
+    # 加载数据集
+    print("load train data ...")
+
+    # training_data = pd.read_csv("/Users/dongyf/dongyf/data/status_rank/tmp")
+
+    # X_train, y_train = load_data("/Users/dongyf/dongyf/data/status_rank/status_click_20201102_feature")
+
+    X_train, y_train = load_training_data("/Users/dongyf/dongyf/data/status_rank/20201125_moto.csv_feature")
+    print("training model ...")
+    #
+    # XGBoost_adjust(X_train, y_train)
+    XGBoost_LR(X_train, y_train)
+    # print("Program over, time cost is ")
+
+    # X_train, y_train = load_training_data("/Users/dongyf/dongyf/data/status_rank/train_data_lr", False)
+    print("training model ...")
+
+    # training_lr(X_train, y_train)
+    print("Program over, time cost is ")
+
+```
+
+
+
+
+
 # 根据过去一段时间用户投票数排名
 
 **排序因子**

@@ -53,7 +53,7 @@ print(a - b)
 # 点加
 print(a + b)
 
-# 点加
+# 点乘
 print(a * b)
 
 # 点平方
@@ -133,6 +133,7 @@ np.sort(a)
 
 # 矩阵转置
 np.transpose(a)
+a.T
 
 # 矩阵相乘
 np.transpose(a).dot(a)
@@ -153,17 +154,17 @@ print(np.clip(a, 5, 9))
 ```python
 A = np.arange(3, 15).reshape((3, 4))
 print(A)
-# 第 3 行
+# 第 2 行
 print(A[2])
-# 第 3 行，第 2 列的数
+# 第 2 行，第 1 列的数
 print(A[2][1])
 print(A[2, 1])
 
-# 第 3 行，: 表示所有
+# 第 2 行，: 表示所有
 print(A[2, :])
-# 第 2 列
+# 第 1 列
 print(A[:1])
-# 第 3 行，第 2 第 3 数
+# 第 2 行，第 1 第 3 数
 print(A[2, 1:3])
 
 # 遍历行

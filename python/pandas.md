@@ -236,6 +236,7 @@ df1 = pd.DataFrame(np.ones((3, 4)) * 0, columns=["A", "B", "C", "D"])
 df2 = pd.DataFrame(np.ones((3, 4)) * 1, columns=["A", "B", "C", "D"])
 df3 = pd.DataFrame(np.ones((3, 4)) * 2, columns=["A", "B", "C", "D"])
 
+# 垂直方向合并（可以对齐）
 res = pd.concat([df1, df2, df3], axis=0, ignore_index=True)
 print(res)
 '''
@@ -251,6 +252,7 @@ print(res)
 8  2.0  2.0  2.0  2.0
 '''
 
+# 水平方向合并（可以对齐）
 res = pd.concat([df1, df2, df3], axis=1, ignore_index=True)
 print(res)
 '''
@@ -264,6 +266,7 @@ print(res)
 df1 = pd.DataFrame(np.ones((3,4))*0, columns=['a','b','c','d'], index=[1,2,3])
 df2 = pd.DataFrame(np.ones((3,4))*1, columns=['b','c','d', 'e'], index=[2,3,4])
 
+# 水平方向合并（无法对齐），外连接
 res = pd.concat([df1, df2], axis=1, join='outer')
 print(res)
 '''
@@ -273,8 +276,8 @@ print(res)
 3  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0
 4  NaN  NaN  NaN  NaN  1.0  1.0  1.0  1.0
 '''
-print()
 
+# 水平方向合并（无法对齐），内连接（只保留行标签匹配上的）
 res = pd.concat([df1, df2], axis=1, join='inner')
 print(res)
 '''
@@ -284,7 +287,7 @@ print(res)
 '''
 
 # join_axes
-# res = pd.concat([df1, df2], axis=1, join_axes=[df1.index])
+res = pd.concat([df1, df2], axis=1, join_axes=[df1.index])
 print(res)
 '''
      a    b    c    d    b    c    d    e
@@ -294,7 +297,7 @@ print(res)
 '''
 
 
-# append：尾部追加
+# append：尾部追加，类似List.append
 df1 = pd.DataFrame(np.ones((3,4))*0, columns=['a','b','c','d'])
 df2 = pd.DataFrame(np.ones((3,4))*1, columns=['a','b','c','d'])
 df3 = pd.DataFrame(np.ones((3,4))*2, columns=['b','c','d', 'e'])
@@ -372,6 +375,9 @@ print(df1)
 print(df2)
 res = pd.merge(df1, df2, on='col1', how='outer', indicator=True)
 print(res)
+# left_only：只在 left_table 中出现
+# right_only：只在 right_table 中出现
+# both：在 left_table 和 right_table 同时出现
 '''
    col1 col_left  col_right      _merge
 0     0        a        NaN   left_only
