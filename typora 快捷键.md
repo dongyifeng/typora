@@ -88,7 +88,7 @@ $ y = \begin{cases} -x & x < 0 \\ x & x \geq 0\end{cases}$
 | $\overline{xx}$  | $\overleftrightarrow{xx}$ | $\underleftrightarrow{xx}$       | $\overleftarrow{xx}$ | $\underleftarrow{xx}$ | $\overrightarrow{xx}$ | $\underrightarrow{xx}$ |
 | ---------------- | ------------------------- | -------------------------------- | -------------------- | --------------------- | --------------------- | ---------------------- |
 | $\underline{xx}$ | $\overbrace{xxx}$         | $\overbrace{xxx}^{aaaa}_{bbbbb}$ | $\underbrace{xxx}$   | $\widetilde{xxx}$     | $\widehat{xxx}$       |                        |
-|                  |                           |                                  |                      |                       |                       |                        |
+| $\cdot$          |                           |                                  |                      |                       |                       |                        |
 |                  |                           |                                  |                      |                       |                       |                        |
 |                  |                           |                                  |                      |                       |                       |                        |
 |                  |                           |                                  |                      |                       |                       |                        |
