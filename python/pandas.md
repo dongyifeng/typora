@@ -98,7 +98,6 @@ print(df)
 # 选择数据
 
 ```python
-
 df = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=["A", "B", "C", "D"])
 print(df)
 
@@ -126,7 +125,7 @@ print(df.iloc[3])
 # 选择第 3 行第一位
 print(df.iloc[3, 1])
 
-# （切片）选择第 3 行到第 5 行的第一位到第三为
+# （切片）选择第 3 行到第 5 行的第一位到第三位
 print(df.iloc[3:5, 1:3])
 
 # （切片）不连续

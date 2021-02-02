@@ -1,4 +1,39 @@
-Select 
+
+
+# Hive
+
+注意：雪球的hive 查询，默认带表名：表名.列名。
+
+
+
+
+
+```mysql
+# String to array to multi_row
+create table candelete.hot_stock_1(stock_name string)
+
+insert into candelete.hot_stock_1 SELECT explode(split("a,b",",")) AS name
+
+
+
+
+```
+
+
+
+
+
+## Select 
+
+分页查询
+
+```mysql
+
+```
+
+
+
+
 
 ```mysql
 create table candelete.cube_stock_id  as

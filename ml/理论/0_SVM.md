@@ -1,3 +1,5 @@
+
+
 # 模型
 
 $f(x_{test})=sign(w \cdot x_{test}+b)=sign(\sum_{i=1}^N a_i y_i x_i \cdot x_{test}+b)$
