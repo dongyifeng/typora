@@ -2,7 +2,7 @@
 
 # 最小生成树
 
-最小生成树（<font color=red>minimum</font> spaming <font color=red>Tree</font>）
+最小生成树（<font color=red>Minimum</font> spaming <font color=red>Tree</font>）
 
 最小生成树定义：
 

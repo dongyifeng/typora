@@ -69,6 +69,9 @@ class ArrayStack(object):
     def push(self, item):
         self.items.append(item)
 
+    # a = [1,2,3]
+    # a.pop()
+    # 输出 3
     def pop(self):
         return self.items.pop()
 
@@ -81,6 +84,63 @@ class ArrayStack(object):
 链式栈：用链表实现
 
 
+
+# 应用
+
+## 括号匹配
+
+给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+
+有效字符串需满足：
+
+1. 左括号必须用相同类型的右括号闭合。
+2. 左括号必须以正确的顺序闭合。
+
+**示例 1：**
+
+>输入：s = "()"
+>输出：true
+
+**示例 2：**
+
+>输入：s = "()[]{}"
+>输出：true
+
+**示例 3：**
+
+> 输入：s = "(]"
+> 输出：false
+
+**示例 4：**
+
+>输入：s = "([)]"
+>输出：false
+
+**示例 5：**
+
+>输入：s = "{[]}"
+>输出：true
+
+思路：遍历str，如果是左边符号，则入栈。如果是右边符号，则从栈中弹出一个，如果匹配则继续，如果栈空了或者不匹配，则匹配失败。
+
+![](../image/20210325231110.jpg)
+
+```python
+    def isValid(self, s: str) -> bool:
+    		# 长度一定为偶数
+        if len(s) % 2 == 1:return False
+        stack = []
+        brackets_map ={"(":")","[":"]","{":"}"} 
+        for c in s:
+            # c 左符号
+            if c in brackets_map:
+                stack.insert(len(stack),c)
+           # 如果栈空或者不配，则匹配失败
+            elif not stack or brackets_map[stack.pop()]!=c:
+                return False
+        # 如果栈不空，说明左符号多。
+        return len(stack) == 0
+```
 
 
 
@@ -115,7 +175,7 @@ class Stack(object):
 
 ```python
 '''
-给定数据 A = [5,3,7,4],返回数组L，L[i] 表示：第i个数向左遍历的第一个比它小的元素的位置
+给定数据 A = [5,3,7,4],返回数组L，L[i] 表示：第 i 个数向左遍历的第一个比它小的元素的位置
 A = [ 5,3,7,4 ]
 L : [ 0,0,2,2 ]
 '''

@@ -1,6 +1,15 @@
 # 并查集
 
+差并集是一种树型的数据结构，用于处理一些不交集（Disjoint Sets）的合并及查询问题。
+
 主要用途：判 断图里是否包含环。
+
+主要操作：
+
+1. Find：确定元素属于哪一个子集。它可以被用来确定两个元素是否属于同一个子集。
+2. Unoin：将两个子集合并成同一个集合。
+
+需要定义如何表示集合。一种常用的策略是为每个集合选定一个固定的元素，称为代表，以表示整个集合。接着，Find(x)Find(x) 返回 xx 所属集合的代表，而 Union 使用两个集合的代表作为参数。
 
 
 
@@ -59,6 +68,25 @@ def main():
 
 main()
 ```
+
+```python
+'''
+代码最简版差并集
+'''
+class DisjointSet:
+    def __init__(self):
+        self.parent = {}
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent, self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        self.parent[self.find(x)] = self.find(y)
+```
+
+
 
 以上算法在union 中：parent[x_root] = y_root ，随意指定父节点。会导致parent 这可树太长。
 
