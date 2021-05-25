@@ -215,3 +215,36 @@ def postorder(node):
 7. 节点_6 = stack.pop()，节点_6 有右子树，将节点_7 压栈：stack_9
 8. 节点_7 = stack.pop()，节点遍历完毕，stack 为空，退出循环。
 
+# 计算树的深度
+
+递归实现
+
+```python
+def calcTreeDepth(root):
+    if not root: return 0
+
+    l_depth = calcTreeDepth(root.left) + 1
+    r_depth = calcTreeDepth(root.right) + 1
+    return max(l_depth, r_depth)
+```
+
+非递归实现
+
+```python
+# 层遍历思想
+def maxDepth2(root):
+    if not root: return 0
+    res = 0
+    stock = [root]
+    while stock:
+        tmp = []
+        # 遍历一层
+        for node in stock:
+            if node.left: tmp.append(node.left)
+            if node.right: tmp.append(node.right)
+        stock = tmp
+        res += 1
+
+    return res
+```
+

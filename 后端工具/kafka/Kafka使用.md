@@ -188,8 +188,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractKafkaConsumer implements IKafkaConsumer {
 
     protected KafkaConsumer<String,String> consumer;
-    @Resource
-    protected CubeSearchTopService cubeSearchTopService;
 
     private final List<ThreadPoolExecutor> threadPoolExecutorList = Lists.newArrayList();
 

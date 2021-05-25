@@ -1,5 +1,18 @@
 [TOC]
 
+
+
+# VIM
+
+```shell
+# vim 编辑器，拷贝数据格式错乱
+:set paste
+```
+
+
+
+
+
 # Java
 
 java list 删除元素
