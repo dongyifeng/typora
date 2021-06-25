@@ -71,3 +71,38 @@ git push -u origin master
 
 
 
+# 创建新项目
+
+## 命令行初始化
+
+```shell
+git config --global user.name "dongyifeng"
+git config --global user.email "dongyf@xueqiu.com"
+```
+
+
+
+## 创建新项目
+
+```shell
+git clone git@git.snowballfinance.com:data/snowflake-push-notification.git
+cd snowflake-push-notification
+touch README.md
+git add README.md
+git commint -m "add README"
+git push -u origin master
+```
+
+
+
+## 创建已存在项目
+
+```shell
+cd existing_folder
+git init
+git remote add origin git@git.snowballfinance.com:data/snowflake-push-notification.git
+git add .
+git commit
+git push -u origin master
+```
+
