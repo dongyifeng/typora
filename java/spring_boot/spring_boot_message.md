@@ -137,7 +137,7 @@ Exchange 和 Queue的绑定可以是多对多的关系。
 
 AMQP 对比 JMS 多了 ==Exchange 和 Binding== 的角色。
 
-![RabbitMQ原理图](/Users/dongyifeng/doc/spring_boot/images/WX20190621-230859.png)
+![RabbitMQ原理图](images/WX20190621-230859.png)
 
 Exchange 很多消息队列绑定。
 
