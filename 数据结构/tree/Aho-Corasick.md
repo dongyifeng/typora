@@ -27,6 +27,11 @@ Trie Tree 和 AC 自动机都是多模式串匹配算法。
 Trie 树的多模式匹配算法
 
 ```python
+class TrieNode:
+    def __init__(self, data=None):
+        self.data = data
+        self.children = {}
+
 class Trie:
     def __init__(self):
         self.root = TrieNode()
@@ -90,7 +95,7 @@ AC 自动的构建步骤：
 1. 构建 Trie Tree
 2. 在 Trie Tree 上构建失败指针（相当于 KMP 中的失效函数 next 数组）
 
-构建Trie Tree 看Trie Tree 介绍文档。
+构建 Trie Tree 看 Trie Tree 介绍文档。
 
 着重介绍构建失败指针。
 
@@ -168,16 +173,18 @@ AC 自动机构架完毕后：
 
 **时间复杂度分析：**
 
-Trie Tree 构建时间复杂度：O(m*len)   m 敏感词个数，len 敏感词的平均长度。
+Trie Tree 构建时间复杂度：O( m * len )   m 敏感词个数，len 敏感词的平均长度。
 
 上构建失败指针
 
-1. 每个节点构建失败指针，都需要从当前层，一层一层向上找，最大值为树的深度（len），
-2. 树的结点树为 k ，那么构建失败指针的时间复杂度为：O(len * k)
+1. 每个节点构建失败指针，都需要从当前层，一层一层向上找，最大值为树的深度（ len ），
+2. 树的结点树为 k ，那么构建失败指针的时间复杂度为：O( len * k)
 
 注意：AC 自动机一旦构建完毕后，不会频繁改动。所以对匹配效率不会影响。
 
 AC 自动机 构建时间为：O(m*len)  + O(len * k)
+
+
 
 ## 匹配
 
