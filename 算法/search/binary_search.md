@@ -47,7 +47,7 @@ def binary_search(nums, target):
 > ```
 
 ```python
-def searchInsert(nums, target):
+def search_insert(nums, target):
     if not nums or nums[0] > target: return 0
     n = len(nums)
     l = 0
@@ -68,7 +68,7 @@ def searchInsert(nums, target):
 1. while l < r
 2. r = mid 而非 r = mid + 1
 
-这样循环完毕后，r = l ，不需要考虑返回r 还是 l 的问题。
+这样循环完毕后，r = l ，不需要考虑返回 r 还是 l 的问题。
 
 
 
