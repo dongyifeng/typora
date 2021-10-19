@@ -21,7 +21,6 @@
         TransportClient client = new PreBuiltTransportClient(cluster_name)
                 .addTransportAddresses(inetSocketTransportAddress);
 
-
         TermVectorsResponse response = client.prepareTermVectors().setIndex("test").setType("test")
                 .setId("1").setSelectedFields("text")
                 .setTermStatistics(true)
