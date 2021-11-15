@@ -71,7 +71,7 @@ main()
 
 ```python
 '''
-代码最简版差并集
+代码最简版查并集
 '''
 class DisjointSet:
     def __init__(self):
