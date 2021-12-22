@@ -89,7 +89,7 @@ def breakfast_number2(staple, drinks, x):
     res = 0
     end = len(drinks)-1
     for i in range(len(staple)):
-        if staple[i] >= x: break
+        if staple[i] + drinks[0] > x: break
         tmp = x - staple[i]
         j = find(drinks, tmp,end)
         if staple[i] + drinks[j - 1] <= x:
