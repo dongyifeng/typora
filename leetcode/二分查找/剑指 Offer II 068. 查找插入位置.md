@@ -66,6 +66,5 @@ print(search_insert([1, 3, 5, 6], 2))
 print(search_insert([1, 3, 5, 6], 7))
 print(search_insert([1, 3, 5, 6], 0))
 print(search_insert([1], 0))
-  
 ```
 
