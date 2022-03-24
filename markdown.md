@@ -12,5 +12,27 @@
 
 ---
 
+**矩阵**
 
+$\begin{pmatrix} 1 & 2 & 3\\ 4 & 5 & 6 \end{pmatrix}$
+
+
+
+$\begin{matrix} 1 & 2 & 3\\ 4 & 5 & 6 \end{matrix}$
+
+
+
+$\begin{bmatrix} 1 & 2 & 3\\ 4 & 5 & 6 \end{bmatrix}$
+
+
+
+$\begin{Bmatrix} 1 & 2 & 3\\ 4 & 5 & 6 \end{Bmatrix}$
+
+
+
+
+
+**分段函数**
+
+$f(n) = \begin{cases} a + b > c &\text{if n is even} \\ b + c > a &\text{if n is odd} \end{cases}$
 
