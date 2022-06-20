@@ -20,6 +20,8 @@ print("size", array.size)
 
 # 创建 array
 
+
+
 ```python
 # 创建
 array = np.array([[1, 2, 3],
