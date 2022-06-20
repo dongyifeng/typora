@@ -20,14 +20,27 @@ print("size", array.size)
 
 # 创建 array
 
+<<<<<<< HEAD
 
+=======
+1. 从其他 Python 结构（列表，元组）转换
+2. numpy 原生数组创建（arange、ones、zeros 等）
+3. 从磁盘读取数组
+4. 通过使用字符串或缓冲区从原始字节创建数组
+5. 使用特殊函库函数（random）
+>>>>>>> b4b14a3e7ad878d56ee83a8bed52dc40810edce9
 
 ```python
 # 创建
 array = np.array([[1, 2, 3],
                   [4, 5, 6]])
 
+# 原生数组创建
 a = np.zeros((2, 3))
+'''
+array([[0., 0., 0.],
+       [0., 0., 0.]])
+'''
 
 a = np.ones((2, 3))
 
@@ -37,7 +50,11 @@ a = np.empty((2, 3))
 a = np.arange(6).reshape((2, 3))
 
 # 生成线段： start,end,num（个数）
+# 指定的开始值和结束值之间平均间隔
 a = np.linspace(1, 10, 5)
+'''
+array([ 1.  ,  3.25,  5.5 ,  7.75, 10.  ])
+'''
 ```
 
 
