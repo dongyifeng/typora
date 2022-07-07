@@ -159,10 +159,10 @@ Kafka 抽象类
 ```java
 import com.codahale.metrics.Gauge;
 import com.google.common.collect.Lists;
-import com.xueqiu.blizzard.cubeTop.service.CubeSearchTopService;
-import com.xueqiu.blizzard.message.kafka.constant.KafkaConstant;
-import com.xueqiu.blizzard.message.kafka.domain.KafkaPayload;
-import com.xueqiu.infra.xcommon.XueqiuMetrics;
+import com.blizzard.cubeTop.service.CubeSearchTopService;
+import com.blizzard.message.kafka.constant.KafkaConstant;
+import com.blizzard.message.kafka.domain.KafkaPayload;
+import com.infra.xcommon.Metrics;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -221,7 +221,7 @@ public abstract class AbstractKafkaConsumer implements IKafkaConsumer {
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS,
                     new LinkedBlockingQueue<>(50000), new ThreadPoolExecutor.DiscardOldestPolicy());
             threadPoolExecutorList.add(threadPoolExecutor);
-            XueqiuMetrics.getInstance().register(getThreadPoolMetricsName() + "_" + i, (Gauge<Integer>) () -> threadPoolExecutor.getQueue().size());
+            Metrics.getInstance().register(getThreadPoolMetricsName() + "_" + i, (Gauge<Integer>) () -> threadPoolExecutor.getQueue().size());
         }
     }
 
@@ -248,7 +248,7 @@ public abstract class AbstractKafkaConsumer implements IKafkaConsumer {
                     }catch (Exception e){
                         log.error("kafka_consume parse body error, topic={}|{}|{}|{}", getTopic(), getGroup(), record.key(), record.value(), e);
                     }finally {
-                        XueqiuMetrics.getInstance().timer("kafka_consume_" + getTopic() + "_" + getGroup()).update(Instant.now().toEpochMilli() - start, TimeUnit.MILLISECONDS);
+                        Metrics.getInstance().timer("kafka_consume_" + getTopic() + "_" + getGroup()).update(Instant.now().toEpochMilli() - start, TimeUnit.MILLISECONDS);
                     }
                 }
             }catch (Exception e){
@@ -278,10 +278,10 @@ Kafka 实现类
 ```java
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xueqiu.blizzard.business.constant.MetricsConstant;
-import com.xueqiu.blizzard.business.thirdParty.cube.service.CubeRpcClientService;
-import com.xueqiu.blizzard.message.kafka.domain.KafkaCubeRebalancingEvent;
-import com.xueqiu.blizzard.message.kafka.domain.KafkaPayload;
+import com.blizzard.business.constant.MetricsConstant;
+import com.blizzard.business.thirdParty.cube.service.CubeRpcClientService;
+import com.blizzard.message.kafka.domain.KafkaCubeRebalancingEvent;
+import com.blizzard.message.kafka.domain.KafkaPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

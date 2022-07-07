@@ -1,6 +1,6 @@
 1. 安装内测版 APP
 
-   http://build.mpaas.snowballfinance.com/?xuegao
+   http://build.mpaas.com/?xuegao
 
 2. 关于雪球 --> 连续点击”雪球“
 

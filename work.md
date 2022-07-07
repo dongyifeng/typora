@@ -51,7 +51,7 @@ Java Http 请求添加版本号。
 
 ```java
             Map<String, String> header = new HashMap<>();
-            header.put("User-Agent", "Xueqiu iPhone 12.0");
+            header.put("User-Agent", "iPhone 12.0");
             final String json = HttpUtil.httpClientGet(url, header);
 ```
 
@@ -105,7 +105,7 @@ tar -zxvf apache-zookeeper-3.5.6-bin.tar.gz
 ```mysql
 WITH t1 AS
   (SELECT REGEXP_EXTRACT(extend0,'click_tab_id":"?([^,"|}]+)',1) AS tab
-  FROM xueqiu.user_behavior
+  FROM user_behavior
   WHERE `day`=20191121
      AND page_id=2200
      AND component_type=1

@@ -11,7 +11,7 @@
 ```mysql
 SELECT DAY,
        extend0
-FROM xueqiu.user_behavior
+FROM user_behavior
 WHERE page_id = 2200
   AND component_type =19
   AND DAY=20200706
@@ -24,13 +24,13 @@ WHERE page_id = 2200
 ## 创建 view
 
 ```mysql
-CREATE VIEW xueqiu.search_sug_first_rate AS
+CREATE VIEW search_sug_first_rate AS
 SELECT DAY,
        sum(CASE
                WHEN REGEXP_EXTRACT(`extend0`,'rank":"?([^,"|}]+)',1) ='0' THEN 1
                ELSE 0
            END)/count(1) AS rate
-FROM xueqiu.user_behavior
+FROM user_behavior
 WHERE page_id = 2200
   AND component_type =19
   AND REGEXP_EXTRACT(`extend0`,'rank":"?([^,"|}]+)',1) !=''
@@ -44,7 +44,7 @@ SELECT DAY,
                ELSE 0
            END)/count(1) AS rate,
            uid % 10 as suffix
-FROM xueqiu.user_behavior
+FROM user_behavior
 WHERE page_id = 2200
   AND component_type =19
   AND REGEXP_EXTRACT(`extend0`,'rank":"?([^,"|}]+)',1) !=''

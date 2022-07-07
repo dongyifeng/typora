@@ -17,7 +17,7 @@ Githup 上 fork 到本人远程分支
 
 ```shell
 # 建立跟远端的联系
-git remote add upstream git@git.snowballfinance.com:backend/snowball.git
+git remote add upstream git@git.com:backend/snowball.git
 
 # 删除远端的联系
 git remote remove upstream
@@ -77,7 +77,7 @@ git push -u origin master
 
 ```shell
 git config --global user.name "dongyifeng"
-git config --global user.email "dongyf@xueqiu.com"
+git config --global user.email "dongyf@qq.com"
 ```
 
 
@@ -85,7 +85,7 @@ git config --global user.email "dongyf@xueqiu.com"
 ## 创建新项目
 
 ```shell
-git clone git@git.snowballfinance.com:data/snowflake-push-notification.git
+git clone git@git.com:data/snowflake-push-notification.git
 cd snowflake-push-notification
 touch README.md
 git add README.md
@@ -100,7 +100,7 @@ git push -u origin master
 ```shell
 cd existing_folder
 git init
-git remote add origin git@git.snowballfinance.com:data/snowflake-push-notification.git
+git remote add origin git@git.com:data/snowflake-push-notification.git
 git add .
 git commit
 git push -u origin master

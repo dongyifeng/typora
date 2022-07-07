@@ -69,7 +69,7 @@ WITH click_t AS
           default.get_json_object(extend0,'$.query_id') AS query_id,
           default.get_json_object(extend0,'$.rank') AS `rank`,
           default.get_json_object(extend0,'$.click_symbol') AS click_symbol
-   FROM xueqiu.user_behavior
+   FROM user_behavior
    WHERE page_id=2200
      AND component_type=1
      AND DAY = 20201115

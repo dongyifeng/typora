@@ -25,7 +25,7 @@ logback.xml 配置包名指定一类日志文件
         </pattern>
     </encoder>
 </appender>
-<logger name="com.xueqiu.search.task" level="INFO" additivity="false">
+<logger name="com.search.task" level="INFO" additivity="false">
     <appender-ref ref="task"/>
 </logger>
 ```

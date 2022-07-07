@@ -157,7 +157,7 @@ public void sendSimpleMail() {
     SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
     simpleMailMessage.setSubject("通知-今晚开会");
     simpleMailMessage.setText("今晚7:30开会");
-    simpleMailMessage.setTo("dongyf@xueqiu.com");
+    simpleMailMessage.setTo("dongyf@qq.com");
     simpleMailMessage.setFrom("519100798@qq.com");
     mailSender.send(simpleMailMessage);
 }
@@ -170,9 +170,8 @@ public void sendMail() throws MessagingException {
     helper.setSubject("通知-今晚开会");
   	// ture：启用 html
     helper.setText("<b style='color:red'>今晚7:30开会</b>", true);
-    helper.setTo("dongyf@xueqiu.com");
+    helper.setTo("dongyf@qq.com");
     helper.setFrom("519100798@qq.com");
-
     // 上传文件
     helper.addAttachment("1.jpg", new File("/Users/dongyifeng/doc/spring_boot/images/WX20190621-230859.png"));
     helper.addAttachment("2.jpg", new File("/Users/dongyifeng/doc/spring_boot/images/QQ20190623-112647@2x.jpg"));

@@ -389,10 +389,10 @@ WHERE ds LIKE '20200609%'
 http://10.10.33.23:8080/query/v1/suggest?q=
 
 # 股票接口（股票状态）
-http://api.inter.xueqiu.com/internal/v5/stock/batch/quote.json?symbol=
+http://api.inter.com/internal/v5/stock/batch/quote.json?symbol=
   
 # 股票近期热度(股票覆盖度不够，不可以使用)
-http://stock.xueqiu.com/v5/stock/screener/quote/list.json?order=desc&order_by=value&page=1&size=100&type=hot_1h&_=1586418778761&x=0.500
+http://stock.com/v5/stock/screener/quote/list.json?order=desc&order_by=value&page=1&size=100&type=hot_1h&_=1586418778761&x=0.500
 ```
 
 股票近期热度
@@ -580,7 +580,7 @@ $y = f(wx) = \frac{1}{1+e^{-wx}}$
 
 ### 评测
 
-[AIBO 大数据平台](http://aibo.inter.snowballfinance.com/panel/details/321)
+[AIBO 大数据平台](http://aibo.inter.com/panel/details/321)
 
 ![](images/20200817102527.jpg)
 
