@@ -288,8 +288,6 @@ public class HeapGreater<T> {
 
 
 
-
-
 # 堆的应用
 
 ## 最大线段重合问题
@@ -303,9 +301,64 @@ public class HeapGreater<T> {
 >
 > 返回线段最多重合区域中，包含了几条线段。
 
+**暴力解法**
+
+由于开始位置和结束位置都是整数值，那么 x.5 必然不在端点位置。假设start = 1 end =10，我们可以逐一尝试：1.5	2.5	3.5	...9.5 所在线段个数，最后获取最大值就是最终的解。
+
+时间复杂度：O(N * ( max - min ))
+
+```python
+def segment_count(nums, x):
+    res = 0
+    for s, e in nums:
+        if x > s and x < e:
+            res += 1
+    return res
+
+def max_cover(nums):
+    # 最小起点
+    min_s = sys.maxsize
+    # 最小终点
+    max_e = 0
+    for s, e in nums:
+        min_s = min(min_s, s)
+        max_e = max(max_e, e)
+
+    x = min_s + 0.5
+    res = 0
+    while x < max_e:
+        res = max(res, segment_count(nums, x))
+        x += 0.5
+    return res
+
+print(max_cover([(1, 3), (2, 6), (4, 5), (3, 9)]))
+```
 
 
 
+**堆解法**
+
+1. 根据线段的起始点排序：从小到大
+2. 使用小根堆存线段的终止节点。如果当前线段的起始点大于小根堆的根节点的值，堆中根节点所在线段已经不能覆盖当前节点，由于已经排序，也不能覆盖后续的线段，将改数据从堆中弹出。
+
+时间复杂度：O(N log N)
+
+空间复杂度：O(N)
+
+```python
+def max_cover2(nums):
+    nums.sort()
+
+    heap = []
+    res = 0
+    for s, e in nums:
+        if heap and s >= heap[0]:
+            heapq.heappop(heap)
+        else:
+            heapq.heappush(heap, e)
+            res = max(res, len(heap))
+    return res
+```
 
 
 
@@ -318,6 +371,32 @@ public class HeapGreater<T> {
 
 
 分析：使用一个长度 k 的堆。每次pop 和 push 进行排序。
+
+时间复杂度：O(N log k)
+
+```python
+import heapq
+
+def sort(nums, k):
+    heap = []
+
+    for i in range(len(nums)):
+        if i < k:
+            heapq.heappush(heap, nums[i])
+        else:
+            nums[i - k] = heapq.heappop(data)
+            heapq.heappush(heap, nums[i])
+
+    i = 0 if len(nums) < k else len(nums) - k
+    while data:
+        nums[i] = heapq.heappop(heap)
+        i += 1
+    return nums
+
+nums = [1, 2, 3, 6, 5]
+sort(nums, k=3)
+print(nums)
+```
 
 
 
@@ -547,9 +626,9 @@ public class TopKRecord {
 >
 >获奖系统规则：
 >
->1. adsfadf
->2. adfadfsad
->3. asdfadf
+>1. 如果某个用户购买产品数为 0，但是又发生了退货事件，则认为该事件无效，获奖名单和之前是一致，比如例子中的用户 5
+>2. 某用户发生购买商品事件，购买商品数 +1，发生退货事件，购买商品数 -1
+>3. 每次都是最多 K 个用户获奖，K 也为出入参数。如果根据全部规则，获奖人数确实不够 K 个，那就输出现存获奖者。
 >4. 获奖系统分为：获奖区和候选区，任何用户只要购买数 > 0，一定在这两个区域中的一个。
 >5. 购买数最大的前 K 名用户进入获奖区，在最初时如果获奖区没有达到 K 个用户，那么新来的用户直接进入获奖区。
 >6. 如果购买数不足以进入获奖区的用户，进入候选区。
