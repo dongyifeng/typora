@@ -29,35 +29,141 @@
 
 主要操作：
 
-- isSameSet( a , b )：判断 a 和 b 是否属于同一个集合
-- unoin( a , b)：将 a 所在集合与 b 所在的集合合并：将数据小的集合挂在数据大代表节点下。
+- isSameSet( a , b )：判断 a 和 b 是否属于同一个集合。
+- unoin( a , b)：把两个不相交的集合合并为一个集合。<font color=red>将数据小的集合挂在数据大代表节点下。</font>
 
 
 
+下图是差并集的构建过程
 
 
 
+![](images/screenshot-20220715-151853.png)
+
+差并集在union 过程确实是 O(1)。
 
 
 
+**路径压缩**
+
+在 isSameSet 过程中，如果链比较长，不是 O(1)。因此有下边的优化过程，在 isSameSet 时，我们需要从当前节点向上找到代表节点，这个过程中，需要将路径上所有节点之间指向代表节点。如下图：
+
+据研究表明：如果差并集中的数据量为 N，调用 N 次以上的 isSameSet 后，isSameSet  的耗时就是 O(1)
 
 
 
+![](images/screenshot-20220715-154054.png)
 
 
 
+```python
+'''
+代码最简版查并集
+'''
+class DisjointSet:
+    def __init__(self,array):
+        self.parent = dict((item, item) for item in array)
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent, self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        self.parent[self.find(x)] = self.find(y)
+
+    def same(self, x, y):
+        return self.find(x) == self.find(y)
+```
 
 
-差并集是一种树型的数据结构，用于处理一些不交集（Disjoint Sets）的合并及查询问题。
 
-主要用途：判 断图里是否包含环。
+```python
+'''
+在 find 时压缩路径
+'''
+class DisjointSet:
+    def __init__(self, array):
+        self.father = dict((item, item) for item in array)
 
-主要操作：
+    def find(self, x):
+        if self.father[x] == x:
+            return x
 
-1. Find：确定元素属于哪一个子集。它可以被用来确定两个元素是否属于同一个子集。
-2. Unoin：将两个子集合并成同一个集合。
+        # 记录查找路径
+        path = []
+        while self.father[x] != x:
+            path.append(x)
+            x = self.father[x]
 
-需要定义如何表示集合。一种常用的策略是为每个集合选定一个固定的元素，称为代表，以表示整个集合。接着，Find(x)Find(x) 返回 xx 所属集合的代表，而 Union 使用两个集合的代表作为参数。
+         # 压缩路径，将路径上节点全部指向代表节点
+        while path:
+            self.father[path.pop()] = x
+        return x
+
+    def union(self, x, y):
+        self.father[self.find(x)] = self.find(y)
+
+    def same(self, x, y):
+        return self.find(x) == self.find(y)
+```
+
+
+
+```python
+'''
+在 find 和 union 时压缩路径
+'''
+class DisjointSet:
+    def __init__(self, array):
+        self.father = dict((item, item) for item in array)
+        self.size_map = dict((item, 1) for item in array)
+
+    def find(self, x):
+        if self.father[x] == x:
+            return x
+
+        path = []
+        while self.father[x] != x:
+            path.append(x)
+            x = self.father[x]
+
+        while path:
+            self.father[path.pop()] = x
+        return x
+
+    def union(self, x, y):
+        x_parent = self.find(x)
+        y_parent = self.find(y)
+
+        more_parent = x_parent if self.size_map[x_parent] > self.size_map[y_parent] else y_parent
+        less_parent = x_parent if more_parent == y_parent else y_parent
+
+        self.father[less_parent] = more_parent
+        self.size_map[more_parent] += self.size_map[less_parent]
+        self.size_map.pop(less_parent)
+
+    def same(self, x, y):
+        return self.find(x) == self.find(y)
+
+disjointSet = DisjointSet([1, 2, 2, 3, 4])
+
+disjointSet.union(1, 2)
+print(disjointSet.father)
+disjointSet.union(1, 3)
+print(disjointSet.father)
+disjointSet.union(1, 4)
+
+print(disjointSet.father)
+```
+
+
+
+# 应用差并集
+
+## 判断图是否有环
+
+需要定义如何表示集合。一种常用的策略是为每个集合选定一个固定的元素，称为代表，以表示整个集合。接着，Find(x) Find(x) 返回 xx 所属集合的代表，而 Union 使用两个集合的代表作为参数。
 
 
 
@@ -117,22 +223,7 @@ def main():
 main()
 ```
 
-```python
-'''
-代码最简版查并集
-'''
-class DisjointSet:
-    def __init__(self):
-        self.parent = {}
 
-    def find(self, x):
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent, self.parent[x])
-        return self.parent[x]
-
-    def union(self, x, y):
-        self.parent[self.find(x)] = self.find(y)
-```
 
 
 
