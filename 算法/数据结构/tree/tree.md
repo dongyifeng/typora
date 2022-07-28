@@ -141,6 +141,11 @@ postorder(root)
 
 ​		由于栈是先进后出，如果我们需要先处理左子树，后处理右子树，所以需要先压右子树
 
+1. 从栈中弹出一个节点 cur
+2. 打印（处理）cur
+3. 先左，再右压栈
+4. 循环上边 3 步
+
 ```python
 '''
 先序遍历：非递归实现
@@ -154,8 +159,6 @@ def preorder(node):
         print(p.data)
         if p.right: stack.append(p.right)
         if p.left: stack.append(p.left)
-
-
 ```
 
 
