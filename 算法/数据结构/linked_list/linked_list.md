@@ -503,7 +503,9 @@ print_linked_list(head)
 
 **机试**
 
-
+1. 使用 map ，原节点为 key，复制节点为 value
+2. node.next 对应复制节点，就 map[node.next]
+3. node.rand 对应复制节点，就 map[node.rand]
 
 ```python
 class ListNode:
@@ -541,7 +543,9 @@ node = copy_linked_list_rand(head)
 
 **面试**
 
-
+1. 将链表每个节点复制一个节点，放在节点后边（这就是模拟Map中的数据，node --> node’ ）。
+2. 维护复制节点的 rand 指针：node.rand.next
+3. 将原链表与复制链表拆分出来。
 
 ![](images/screenshot-20220728-002026.png)
 
@@ -581,8 +585,8 @@ def copy_linked_list_rand2(head):
 
 
 
-> 两个链表相交
->
+## 两个链表相交
+
 > 【题目】给定两个可能有环也可能无环的单链表，头结点 head1 和 head2。请实现一个函数，如果两个链表相交，请返回相交的第一个节点。如果不相交，返回 null。
 >
 > 【要求】如果两个链表长度之和为 N ，时间复杂度请达到 O(N)，额外空间复杂度请达到 O(1)

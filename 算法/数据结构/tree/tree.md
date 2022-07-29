@@ -320,7 +320,7 @@ def inorder(head):
 7. 节点_6 = stack.pop()，节点_6 有右子树，将节点_7 压栈：stack_9
 8. 节点_7 = stack.pop()，节点遍历完毕，stack 为空，退出循环。
 
-![](../../算法/左程云/images/screenshot-20220617-164118.png)
+![](../../左程云/images/screenshot-20220617-164118.png)
 
 
 
