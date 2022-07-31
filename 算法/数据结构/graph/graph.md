@@ -246,6 +246,45 @@ graph = create_graph3(matrix)
 
 
 
+```python
+graph_map = {
+    "A": {"B": 5, "C": 1},
+    "B": {"A": 5, "C": 2, "D": 1},
+    "C": {"A": 1, "B": 2, "D": 4, "E": 8},
+    "D": {"B": 1, "C": 4, "E": 3, "F": 6},
+    "E": {"C": 8, "D": 3},
+    "F": {"D": 6}
+}
+
+def create_graph3(graph_map):
+    graph = Graph()
+
+    for from_val, to_map in graph_map.items():
+        for to_val, weight in to_map.items():
+            if from_val not in graph.nodes:
+                graph.nodes[from_val] = Node(value=from_val)
+            if to_val not in graph.nodes:
+                graph.nodes[to_val] = Node(value=to_val)
+
+            from_node = graph.nodes[from_val]
+            to_node = graph.nodes[to_val]
+            from_node.nexts.append(to_node)
+            from_node.out_degree += 1
+            to_node.in_degree += 1
+
+            edge = Edge(weight, from_node, to_node)
+            from_node.edges.append(edge)
+            graph.edges.add(edge)
+
+    return graph
+```
+
+
+
+
+
+
+
 - 图的搜索：广度优先和深度优先
 - 最短路径
 - 最小生成树
@@ -289,20 +328,37 @@ s:起始节点
 '''
 print("广度遍历")
 def BFS(graph, s):
-    queue = []
-    queue.append(s)
-    seen = set()
-    seen.add(s)
+    queue = [s]
+    seen = set([s])
     while queue:
-        vertex = queue.pop(0)
-        nodes = graph[vertex]
-        for w in nodes:
-            if w in seen: continue
-            queue.append(w)
-            seen.add(w)
-        print(vertex)
+        cur = queue.pop(0)
+        for node in graph[cur]:
+            if node in seen: continue
+            queue.append(node)
+            seen.add(node)
+        print(cur)
 BFS(graph, "E")
 ```
+
+
+
+```python
+import Graph
+
+def bfs(graph: Graph, start: Graph.Node):
+    if not graph or not graph.nodes: return
+    queue = [start]
+    seen = set([start])
+    while queue:
+        cur = queue.pop(0)
+        for child in cur.nexts:
+            if child not in seen:
+                queue.append(child)
+                seen.add(child)
+        print(cur.value)
+```
+
+
 
 
 
@@ -329,17 +385,34 @@ s:其实节点
 '''
 def DFS(graph, s):
     stack = [s]
-    seen = set(s)
+    seen = set([s])
     while stack:
-        vertex = stack.pop()
-        nodes = graph[vertex]
-        for w in nodes:
-            if w in seen: continue
-            stack.append(w)
-            seen.add(w)
-        print(vertex)
+        cur = stack.pop()
+        for node in graph[cur]:
+            if node in seen: continue
+            stack.append(node)
+            seen.add(node)
+        print(cur)
 DFS(graph, "E")
 ```
+
+
+
+```python
+def dfs(graph: Graph, start: Graph.Node):
+    if not graph or not graph.nodes: return
+    queue = [start]
+    seen = set([start])
+    while queue:
+        cur = queue.pop()
+        for child in cur.nexts:
+            if child not in seen:
+                queue.append(child)
+                seen.add(child)
+        print(cur.value)
+```
+
+
 
 
 
@@ -383,20 +456,17 @@ parent ={
 print("求任意两点间的最短路径")
 
 def BFS2(graph, s):
-    queue = []
-    queue.append(s)
-    seen = set()
-    seen.add(s)
+    queue = [s]
+    seen = set([s])
     parent = {s: None}
     while queue:
-        vertex = queue.pop(0)
-        nodes = graph[vertex]
-        for w in nodes:
-            if w in seen: continue
-            queue.append(w)
-            seen.add(w)
-            parent[w] = vertex
-        print(vertex)
+        cur = queue.pop(0)
+        for node in graph[cur]:
+            if node in seen: continue
+            queue.append(node)
+            seen.add(node)
+            parent[node] = cur
+        print(node)
     return parent
 
 parent = BFS2(graph, "A")
@@ -407,6 +477,47 @@ v = 'E'
 while v:
     print(v)
     v = parent[v]
+```
+
+
+
+```python
+graph_map = {
+    "A": ["B", "C"],
+    "B": ["A", "C", "D"],
+    "C": ["A", "B", "D", "E"],
+    "D": ["B", "C", "E", "F"],
+    "E": ["C", "D"],
+    "F": ["D"]
+}
+
+def BFS3(graph, s):
+    queue = [s]
+    seen = {s}
+    parent = {s: None}
+    while queue:
+        cur = queue.pop(0)
+        for node in graph.nodes[cur].nexts:
+            if node.value in seen: continue
+            queue.append(node.value)
+            seen.add(node.value)
+            parent[node.value] = cur
+    return parent
+
+
+def short_path(graph, s):
+    parent = BFS3(graph, s)
+    print("打印路径")
+    v = 'E'
+    while v:
+        print(v)
+        v = parent[v]
+
+print("-" * 100)
+
+graph = Graph.create_graph2(graph_map)
+short_path(graph, "A")
+
 ```
 
 
@@ -464,24 +575,63 @@ graph = {
 def dijkstra(graph, s):
     queue = []
     heapq.heappush(queue, (0, s))
-    seen = set()
+    seen = {s}
 
     parent = {s: None}
     distance = dict((i, math.inf) for i in graph.keys())
     distance[s] = 0
     while queue:
-        dist, vertex = heapq.heappop(queue)
-        nodes = graph[vertex].keys()
-        seen.add(vertex)
-        for w in nodes:
-            if w in seen: continue
-            if dist + graph[vertex][w] < distance[w]:
-                heapq.heappush(queue, (dist + graph[vertex][w], w))
-                parent[w] = vertex
-                distance[w] = dist + graph[vertex][w]
+        dist, cur = heapq.heappop(queue)
+        seen.add(cur)
+
+        for node in graph[cur].keys():
+            if node in seen: continue
+            if dist + graph[cur][node] < distance[node]:
+                heapq.heappush(queue, (dist + graph[cur][node], node))
+                parent[node] = cur
+                distance[node] = dist + graph[cur][node]
+
     return parent, distance
 
 p, d = dijkstra(graph, "A")
+print(p)
+print(d)
+
+v = 'E'
+while v:
+    print(v, d[v])
+    v = p[v]
+```
+
+
+
+```python
+def dijkstra2(graph: Graph.Graph, s):
+    queue = []
+    heapq.heappush(queue, (0, s))
+    seen = {s}
+
+    parent = {s: None}
+    distance = dict((node_val, math.inf) for node_val in graph.nodes.keys())
+    distance[s] = 0
+    while queue:
+        dist, cur = heapq.heappop(queue)
+        seen.add(cur)
+
+        for edge in graph.nodes[cur].edges:
+            node = edge.to_node.value
+            if node in seen: continue
+            if dist + edge.weight < distance[node]:
+                heapq.heappush(queue, (dist + edge.weight, node))
+                parent[node] = cur
+                distance[node] = dist + edge.weight
+
+    return parent, distance
+
+
+print("-" * 100)
+graph = Graph.create_graph3(graph_map)
+p, d = dijkstra2(graph, "A")
 print(p)
 print(d)
 
