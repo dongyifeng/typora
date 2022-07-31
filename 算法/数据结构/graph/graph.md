@@ -103,6 +103,149 @@
 
 # 常见算法
 
+图的组织结构形式非常多，相同的算法在不同的结构上，差异也非常大。因此我们需要将所有算法在一种（适合自己）结构上，练习熟练。后续再遇到结构不同图，只需要写一个转换函数，将异构的图，转成自己熟悉的图。
+
+下边的  Graph 结构，比较复杂，可以涵盖大部分的图算法。在实际的算法中，对于没有使用的属性，可以不赋值。如果在工程中使用graph 可以根据实际情况进行改动。
+
+```python
+class Edge:
+    def __init__(self, weight, from_node=None, to_node=None):
+        self.weight = weight
+        self.from_node = from_node
+        self.to_node = to_node
+
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.in_degree = 0
+        self.out_degree = 0
+        self.nexts = []
+        self.edges = []
+
+
+class Graph:
+    def __init__(self):
+        self.nodes = {}
+        self.edges = set()
+```
+
+
+
+```python
+# [ from, to, weight ]
+
+# [ [1, 2, 0.5],
+#  [2, 3, 0.6] ]
+def create_graph(matrix):
+    graph = Graph()
+
+    for i in range(len(matrix)):
+        from_val = matrix[i][0]
+        to_val = matrix[i][1]
+        weight = matrix[i][0]
+
+        if from_val not in graph.nodes:
+            graph.nodes[from_val] = Node(value=from_val)
+        if to_val not in graph.nodes:
+            graph.nodes[to_val] = Node(value=to_val)
+
+        from_node = graph.nodes[from_val]
+        to_node = graph.nodes[to_val]
+        from_node.nexts.append(to_node)
+        from_node.out_degree += 1
+        to_node.in_degree += 1
+
+        edge = Edge(weight, from_node, to_node)
+        from_node.edges.append(edge)
+        graph.edges.add(edge)
+
+    return graph
+```
+
+
+
+
+
+```python
+graph_map = {
+    "A": ["B", "C"],
+    "B": ["A", "C", "D"],
+    "C": ["A", "B", "D", "E"],
+    "D": ["B", "C", "E", "F"],
+    "E": ["C", "D"],
+    "F": ["D"]
+}
+
+def create_graph2(graph_map):
+    graph = Graph()
+
+    for from_val, to_list in graph_map.items():
+
+        weight = 0
+        for to_val in to_list:
+
+            if from_val not in graph.nodes:
+                graph.nodes[from_val] = Node(value=from_val)
+            if to_val not in graph.nodes:
+                graph.nodes[to_val] = Node(value=to_val)
+
+            from_node = graph.nodes[from_val]
+            to_node = graph.nodes[to_val]
+            from_node.nexts.append(to_node)
+            from_node.out_degree += 1
+            to_node.in_degree += 1
+
+            edge = Edge(weight, from_node, to_node)
+            from_node.edges.append(edge)
+            graph.edges.add(edge)
+
+    return graph
+
+graph = create_graph2(graph_map)
+```
+
+
+
+```python
+# 带权无向图
+matrix = [[0, 5, 3, 0],
+          [5, 0, 2, 6],
+          [3, 2, 0, 1],
+          [0, 6, 1, 0]]
+
+def create_graph3(matrix):
+    graph = Graph()
+
+    n = len(matrix)
+    for from_val in range(n):
+
+        for to_val in range(n):
+            weight = matrix[from_val][to_val]
+            if weight == 0: continue
+
+            if from_val not in graph.nodes:
+                graph.nodes[from_val] = Node(value=from_val)
+            if to_val not in graph.nodes:
+                graph.nodes[to_val] = Node(value=to_val)
+
+            from_node = graph.nodes[from_val]
+            to_node = graph.nodes[to_val]
+            from_node.nexts.append(to_node)
+            from_node.out_degree += 1
+            to_node.in_degree += 1
+
+            edge = Edge(weight, from_node, to_node)
+            from_node.edges.append(edge)
+            graph.edges.add(edge)
+
+    return graph
+
+graph = create_graph3(matrix)
+```
+
+
+
 - 图的搜索：广度优先和深度优先
 - 最短路径
 - 最小生成树
@@ -110,11 +253,15 @@
 
 广度优先和深度优先遍历主要针对：无权图。
 
+
+
 ## 广度优先遍历
 
 ![](images/20210201101123.jpg)
 
-广度优先遍历：利用队列来控制子节点遍历顺序。
+图的广度优先遍历和树的层遍历类似，需要使用<font color=red>**队列**</font>来控制节点遍历顺序。不同的是，图可能有环，导致死循环，因此需要借助一个集合，存放已经遍历过的节点，后续遍历跳过这些节点。
+
+
 
 节点1，为起始节点。
 
@@ -161,10 +308,14 @@ BFS(graph, "E")
 
 ## 深度遍历
 
-![](images/20210201102257.jpg)
+深度遍历与树的：前序、中序、后序遍历类似，需要使用<font color=red>**栈**</font>来控制节点遍历顺序。不同的是，图可能有环，导致死循环，因此需要借助一个集合，存放已经遍历过的节点，后续遍历跳过这些节点。
 
 - 实线箭头：遍历
 - 虚线箭头：回退
+
+![](images/20210201102257.jpg)
+
+- 
 
 ![](images/20210203145247.jpg)
 
@@ -177,10 +328,8 @@ s:其实节点
 借助 stack
 '''
 def DFS(graph, s):
-    stack = []
-    stack.append(s)
-    seen = set()
-    seen.add(s)
+    stack = [s]
+    seen = set(s)
     while stack:
         vertex = stack.pop()
         nodes = graph[vertex]
@@ -198,6 +347,8 @@ DFS(graph, "E")
 
 - 在无权图上的最短路径
 - 在有权图上的最短路径
+
+
 
 ## 无权图最短路径
 

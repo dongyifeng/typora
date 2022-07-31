@@ -68,12 +68,12 @@ def findMin2(nums):
 
 ## nums 有重复数据
 
-如果nums 有重复数据：【7, 0, 1, 1, 1, 1, 1, 2, 3, 4】
+如果 nums 有重复数据：【7, 0, 1, 1, 1, 1, 1, 2, 3, 4】
 
 if nums[mid] == nums[right]: 无法判断 mid 在哪个数组中。
 例如：left = 0 ，right = 4，mid = 2 时，
-如果nums = 【1,0,1,1,1】中 mid 在 nums2 中
-如果nums = 【1,1,1,0,1】中 mid 在 nums1 中
+如果 nums = 【1,0,1,1,1】中 mid 在 nums2 中
+如果 nums = 【1,1,1,0,1】中 mid 在 nums1 中
 
 if nums[mid] == nums[right]: right = right - 1
 
