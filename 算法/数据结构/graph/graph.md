@@ -113,6 +113,9 @@ class Edge:
         self.weight = weight
         self.from_node = from_node
         self.to_node = to_node
+    
+    def __lt__(self, other):
+        return self.weight < other.weight
 
 
 class Node:
@@ -143,7 +146,7 @@ def create_graph(matrix):
     for i in range(len(matrix)):
         from_val = matrix[i][0]
         to_val = matrix[i][1]
-        weight = matrix[i][0]
+        weight = matrix[i][2]
 
         if from_val not in graph.nodes:
             graph.nodes[from_val] = Node(value=from_val)
@@ -517,7 +520,6 @@ print("-" * 100)
 
 graph = Graph.create_graph2(graph_map)
 short_path(graph, "A")
-
 ```
 
 

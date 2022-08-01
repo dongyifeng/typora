@@ -6,6 +6,12 @@
 
 # 最小生成树
 
+
+
+<font color=orange>Kruskal 和 Prim 算法都必须在无向图上。</font>
+
+
+
 最小生成树（<font color=red>Minimum</font> spaming <font color=red>Tree</font>）
 
 最小生成树定义：
@@ -31,9 +37,19 @@ Minimum:
 
 ## Kruskal 
 
+从边出发，来解决最小生成树的问题。
+
+由于本算法是从权重最小的边开始使用，边的使用是随机，跳跃的，在过程中会出现连成一片图与另一个连城一片的图尝试连接，因此需要使用差并集去判断两个集合是否是同一个。prime 算法是从一个节点，逐渐扩展到全图，因此不存在两个小图连接的情况，因此不需要使用差并集。
+
+
+
+![](images/screenshot-20220801-221959.png)
+
+
+
 步骤：
 
-1. 将图中所有边，排序：sorted_edages
+1. 将图中所有边，排序：sorted_edages（升序）
 2. 遍历：sorted_edages，将边回填到图中。
 3. 判断是否有环，如果有环，丢弃回填的边。
 4. 直到回填边数 == vertices_count - 1
@@ -65,6 +81,9 @@ class FindUnionSet:
         else:
             self.parent[x_root] = y_root
             return True
+          
+     def same(self,x,y):
+      return self.find(x) == self.find(y)
 
 def kruskal(vertices_count, edges):
     n = vertices_count
@@ -73,10 +92,11 @@ def kruskal(vertices_count, edges):
     find_union_set = FindUnionSet(vertices_count)
     for i in range(len(edges)):
         edge = sorted_edges[i]
-        result.append(edge)
-        # 如果有环
-        if not find_union_set.union(edge[1], edge[2]):
-            result.remove(edge)
+        # 如果无环
+        if not find_union_set.same(edge[1], edge[2]):
+            result.append(edge)
+            union_find.union(edge[1], edge[2])
+            
         if len(result) == n - 1: break
     return result
 
@@ -86,6 +106,58 @@ edges = [(4, 0, 1), (8, 0, 7), (11, 1, 7), (8, 1, 2), (7, 2, 3), (4, 2, 5), (2, 
 
 print(kruskal(9, edges))
 ```
+
+
+
+使用标准图结构
+
+```python
+from graph.my_graph import Graph
+from graph.my_graph import create_graph
+from graph.UnionFind import UnionFind
+
+import heapq
+
+def kruskal(graph: Graph):
+    union_find = UnionFind(graph.nodes.values())
+
+    priority_queue = []
+    for edge in graph.edges:
+        heapq.heappush(priority_queue, edge)
+
+    result = set()
+    while priority_queue:
+        edge = heapq.heappop(priority_queue)
+        # 判断是否有环：from_node 和 to_node 是否在一个集合里
+        if not union_find.same(edge.from_node, edge.to_node):
+            result.add(edge)
+            union_find.union(edge.from_node, edge.to_node)
+
+    return result
+  
+# (from, to, weight)
+matrix = [(0, 1, 4),
+          (0, 7, 8),
+          (1, 7, 11),
+          (1, 2, 8),
+          (2, 3, 7),
+          (2, 5, 4),
+          (2, 8, 2),
+          (3, 4, 9),
+          (3, 5, 14),
+          (4, 5, 10),
+          (5, 6, 2),
+          (6, 7, 1),
+          (6, 8, 6),
+          (7, 8, 7)]
+
+graph = create_graph(matrix)
+
+for edge in kruskal(graph):
+    print(edge.from_node.value, edge.to_node.value, edge.weight)
+```
+
+
 
 
 
