@@ -37,13 +37,25 @@ Minimum:
 
 ## Kruskal 
 
-从边出发，来解决最小生成树的问题。
+<font color=green>从边出发，来解决最小生成树的问题。</font>
 
-由于本算法是从权重最小的边开始使用，边的使用是随机，跳跃的，在过程中会出现连成一片图与另一个连城一片的图尝试连接，因此需要使用差并集去判断两个集合是否是同一个。prime 算法是从一个节点，逐渐扩展到全图，因此不存在两个小图连接的情况，因此不需要使用差并集。
+由于本算法是从权重最小的边开始使用，边的使用是随机，跳跃的，在过程中会出现连成一片图与另一个连城一片的图尝试连接，因此需要使用差并集去判断两个集合是否是同一个。
+
+
+
+
 
 
 
 ![](images/screenshot-20220801-221959.png)
+
+
+
+prime 算法是从一个节点，逐渐扩展到全图，因此不存在两个小图连接的情况，因此不需要使用差并集。
+
+如下图：在判断节点8 和节点7之间的边是否可以作为最小生成树的边时，节点7 和 节点8 在同一个集合中（蓝色节点），也可以用新加边后是否成环来判断。
+
+![](images/screenshot-20220802-095137.png)
 
 
 
@@ -163,6 +175,8 @@ for edge in kruskal(graph):
 
 ## Prim 
 
+<font color=green>从节点出发，来解决最小生成树的问题。</font>
+
 ![](images/20210225110737.jpg)
 
 1. 通过 select 数组，将图中的结点，划分为已访问过和未访问过两部分。
@@ -205,5 +219,44 @@ graph = [[(4, 0, 1), (8, 0, 7)],
          [(1, 6, 7), (6, 6, 8), (2, 6, 5)],
          [(8, 7, 0), (11, 7, 1), (7, 7, 8), (1, 7, 6)],
          [(7, 8, 7), (2, 8, 2), (6, 8, 6)]]
+```
+
+
+
+
+
+```python
+from graph.my_graph import Graph
+
+import heapq
+
+def prim(graph: Graph):
+    # 解锁的边进入小根堆
+    priority_queue = []
+    seen = set()
+    res = set()
+
+    # 如果 graph 是个森林，那么遍历形式可以找到所有子图的最小生成树
+    for node in graph.nodes.values():
+        # 随便挑选一个节点：node
+        if node in seen: continue
+        seen.add(node)
+        # 由一个节点，解锁相连的边
+        for edge in node.edges:
+            heapq.heappush(priority_queue, edge)
+        # 以上只是初始化以 node 开始图的探索
+
+        while priority_queue:
+            # 弹出解锁的边中，最小的边
+            edge = heapq.heappop(priority_queue)
+            to_node = edge.to_node
+
+            if to_node in seen: continue
+            seen.add(to_node)
+            res.add(edge)
+            for edge in to_node.edges:
+                heapq.heappush(priority_queue, edge)
+
+    return res
 ```
 

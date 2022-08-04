@@ -532,6 +532,10 @@ Dijkstra 算法与无权图最短路基算法的区别在于：
 
 1. 使用<font color=red>优先级队列</font>，保证最短的路径节点，优先被拿出。
 
+
+
+注意：不能有权重为负数的环。
+
 ```python
 # 通过小顶堆实现的
 import heapq
@@ -609,37 +613,33 @@ while v:
 
 ```python
 def dijkstra2(graph: Graph.Graph, s):
-    queue = []
-    heapq.heappush(queue, (0, s))
+    queue = [(0, s)]
+    # 记录已经处理过的节点，以后再也不碰
     seen = {s}
 
-    parent = {s: None}
+    # 记录从 s  出发到所有点的最小距离
     distance = dict((node_val, math.inf) for node_val in graph.nodes.keys())
     distance[s] = 0
+    # 记录从 s 出发到所有点的路径(如果题目不需要路径，可以去掉 parent)
+    parent = {s: None}
     while queue:
         dist, cur = heapq.heappop(queue)
         seen.add(cur)
 
         for edge in graph.nodes[cur].edges:
-            node = edge.to_node.value
-            if node in seen: continue
-            if dist + edge.weight < distance[node]:
-                heapq.heappush(queue, (dist + edge.weight, node))
-                parent[node] = cur
-                distance[node] = dist + edge.weight
+            node_val = edge.to_node.value
+            if node_val in seen: continue
+            if dist + edge.weight < distance[node_val]:
+                heapq.heappush(queue, (dist + edge.weight, node_val))
+                distance[node_val] = dist + edge.weight
+                parent[node_val] = cur
 
-    return parent, distance
-
+    return parent,distance
 
 print("-" * 100)
 graph = Graph.create_graph3(graph_map)
-p, d = dijkstra2(graph, "A")
-print(p)
-print(d)
+distance = dijkstra2(graph, "A")
 
-v = 'E'
-while v:
-    print(v, d[v])
-    v = p[v]
+print(distance)
 ```
 
