@@ -123,6 +123,87 @@ if right_left_size > left_size:  # 右旋，左旋
 
 
 
+## 删除
+
+删除节点为叶子节点
+
+![](images/screenshot-20220815-230315.png)
+
+
+
+删除节点有left 节点，没有 right 节点：cur = cur.left
+
+![](images/screenshot-20220815-230400.png)
+
+
+
+删除节点有 right节点，没有 left节点：cur = cur.right
+
+![](images/screenshot-20220815-230411.png)
+
+
+
+
+
+删除节点 21。cur 有左节点和右节点。用cur.left 的最右节点替换 cur 或者使用 cur.right 的最左节点替换 cur。
+
+下图是用 cur.right 的最左节点替换 cur。 下图 des.left 为空，需要安排好 desc.right ， pre.left = desc.right
+
+替换： des.left = cur.left ; des.right = cur.right。  
+
+![](images/screenshot-20220815-224332.png)
+
+
+
+```python
+    # 在cur这棵树上，删掉 key 所代表的节点
+		# 返回cur这棵树的新头部
+    def delete(self, cur: Node, key):
+        cur.size -= 1
+        if cur.key > key:
+            cur.left = self.delete(cur.left, key)
+        elif cur.key < key:
+            cur.right = self.delete(cur.right, key)
+        else:
+            # 要删除 cur，cur.key == key
+            # cur 是叶子节点
+            if not cur.left and not cur.right:
+                cur = None
+            # cur 只有右节点
+            elif not cur.left and cur.right:
+                cur = cur.right
+            # cur 只有左节点
+            elif cur.left and not cur.right:
+                cur = cur.left
+            else:
+              	# cur 有左有右
+              	# 查询到 cur.right 的最左边的结点 pre
+                # 可以替换 cur 的节点为：cur.right 的最左节点或者 cur.left 最右节点
+                pre = None
+                des = cur.right
+                des.size -= 1
+                while not des.left:
+                    pre = des
+                    des = des.left
+                    des.size -= 1
+                    
+                if pre:
+                    # 将 des.right 安排给好的人家
+                    pre.left = des.right
+                    # des.right 替换 cur.right
+                    des.right = cur.right
+                # des.left 替换 cur.left
+                # des 替换 cur 完毕
+                des.left = cur.left
+                # 更新 des
+                des.size = des.left.size + (des.right.size if des.right else 0) + 1
+                cur = des
+
+        return cur
+```
+
+
+
 
 
 
@@ -240,14 +321,18 @@ class SizeBalancedTreeMap:
     def add(self, cur: Node, key, value):
         if not cur: return Node(key, value)
 
+        # 寻找插入点 
         cur.size += 1
         if cur.key > key:
             cur.left = self.add(cur.left, key, value)
         else:
             cur.right = self.add(cur.right, key, value)
 
+        # 调整平衡性
         return self.maintain(cur)
 
+    # 在cur这棵树上，删掉 key 所代表的节点
+		# 返回cur这棵树的新头部
     def delete(self, cur: Node, key):
         cur.size -= 1
         if cur.key > key:
@@ -255,14 +340,20 @@ class SizeBalancedTreeMap:
         elif cur.key < key:
             cur.right = self.delete(cur.right, key)
         else:
-            # 要删除 cur
+            # 要删除 cur，cur.key == key
+            # cur 是叶子节点
             if not cur.left and not cur.right:
                 cur = None
+            # cur 只有右节点
             elif not cur.left and cur.right:
                 cur = cur.right
+            # cur 只有左节点
             elif cur.left and not cur.right:
                 cur = cur.left
             else:
+              	# cur 有左有右
+              	# 查询到 cur.right 的最左边的结点 pre
+                # 可以替换 cur 的节点为：cur.right 的最左节点或者 cur.left 最右节点
                 pre = None
                 des = cur.right
                 des.size -= 1
@@ -270,10 +361,16 @@ class SizeBalancedTreeMap:
                     pre = des
                     des = des.left
                     des.size -= 1
+                    
                 if pre:
+                    # 将 des.right 安排给好的人家
                     pre.left = des.right
-                    des = des.left
+                    # des.right 替换 cur.right
+                    des.right = cur.right
+                # des.left 替换 cur.left
+                # des 替换 cur 完毕
                 des.left = cur.left
+                # 更新 des
                 des.size = des.left.size + (des.right.size if des.right else 0) + 1
                 cur = des
 
