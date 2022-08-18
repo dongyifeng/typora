@@ -461,7 +461,7 @@ class SizeBalancedTreeMap:
         len_l = (length - len_m) / 2
         len_r = length - len_m - len_l
         val = self.get_space(len_l) + val + self.get_space(len_r)
-        print(self.get_space(height + length) + val)
+        print(self.get_space(height * length) + val)
         self.print_in_order(head.left, height + 1, "^", length)
 
     def get_space(self, num):
