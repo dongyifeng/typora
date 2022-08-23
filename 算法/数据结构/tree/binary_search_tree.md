@@ -26,7 +26,7 @@
                 p = p.left
             elif data > p.data:
                 p = p.right
-            return p
+        return p
 ```
 
 
