@@ -2,7 +2,7 @@
 
 
 
-Size Balanced Tree
+# Size Balanced Tree
 
 
 
@@ -203,6 +203,52 @@ if right_left_size > left_size:  # 右旋，左旋
 ```
 
 
+
+## floor
+
+如果表中存入过 key，返回 key，否则返回所有键值的排序结果中，key 的前一个。
+
+例子：floor ( 59 )
+
+![](images/screenshot-20220824-161711.png)
+
+```python
+    def floor(self, data):
+        res = None
+        cur = self.root
+        while cur:
+            if cur.data == data:
+                return cur
+            if cur.data > data:
+                cur = cur.left
+            else:
+                res = cur
+                cur = cur.right
+        return res
+```
+
+
+
+## ceiling
+
+如果表中存入过 key，返回 key，否则返回所有键值的排序结果中，key 的后一个。
+
+
+
+```python
+    def ceiling(self, data):
+        res = None
+        cur = self.root
+        while cur:
+            if cur.data == data:
+                return cur
+            if cur.data > data:
+                res = cur
+                cur = cur.left
+            else:
+                cur = cur.right
+        return res
+```
 
 
 
