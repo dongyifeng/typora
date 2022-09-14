@@ -522,7 +522,9 @@ class SugRank:
 
 左图：sug 第一位的点击率：$\frac{第一位点击数}{总点击数}$
 
-右图：sug Mean reciprocal rank：$MRR = \frac{1}{|click|} \sum_i^{|click|}{\frac{1}{rank_i}}$
+右图：sug Mean reciprocal rank：
+
+$$MRR = \frac{1}{|click|} \sum_i^{|click|}{\frac{1}{rank_i}}$$
 
 
 
