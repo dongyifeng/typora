@@ -26,7 +26,8 @@
                 p = p.left
             elif data > p.data:
                 p = p.right
-            return p
+            else:
+            	return p
 ```
 
 
@@ -169,6 +170,8 @@
 
 
 ## 查找后继节点
+
+
 
 ## 排序
 
