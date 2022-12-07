@@ -48,6 +48,8 @@ sequenceDiagram
 
 常见符号：
 
+
+
 $\nabla$ $\Delta$ $\rightarrow$ $\uparrow$ $\downarrow$ $\leftarrow$ $\Uparrow$ $\Downarrow$ $\Leftarrow$ $\Rightarrow$ $\Updownarrow$ $\Leftrightarrow$  $\leftrightarrow$ $\longrightarrow \approx \, \in \, \not\in A\subseteq B\,A\subsetneq B ,A\not\subseteq B,A\supseteq B ,A\supsetneq B,A\not\subseteq B,A\cap B,A\cup B,\overline{A} ,A\setminus B,\mathbb{R},\emptyset$
 
 
