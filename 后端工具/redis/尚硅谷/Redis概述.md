@@ -252,8 +252,6 @@ AOF 默认不开启，默认为 appendonly.aof，AOF 文件的路径与 RDB 的�
 
 
 
-
-
 **异常恢复**
 
 如果遇到<font color=red> AOF 文件损坏</font>，通过 /usr/local/bin/<font color=red>redis-check-aof --fix appendonly.aof</font> 进行修复
