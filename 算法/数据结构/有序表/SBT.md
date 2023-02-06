@@ -1,7 +1,5 @@
 [TOC]
 
-
-
 # Size Balanced Tree
 
 
