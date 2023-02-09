@@ -16,7 +16,7 @@ CAP 原理就好比分布式领域的牛顿定律，它是分布式存储的理�
 
 
 
-![](/images/distributed/WX20230206-102040.png)
+<img src="/images/distributed/WX20230206-102040.png" style="zoom:80%;" />
 
 
 

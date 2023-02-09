@@ -190,14 +190,6 @@ Redis 事务的主要作用就是<font color=red>串联多个命令</font><font 
 
 
 
-
-
-
-
-
-
-
-
 # 持久化
 
 Redis 的数据全部在内存里，如果突然宕机，数据就会全部丢失，因此必须有一种机制来保证 Redis 的数据不会因为故障而丢失，这种机制就是 Redis 的持久化机制。
@@ -237,7 +229,7 @@ Redis 会单独创建（fork）一个子进程来进行持久化，会先将数�
 RDB 劣势
 
 - Fork 的时候，内存中的数据被克隆了一份，大致 2 倍的膨胀空间
-- <font color=green>虽然 Redis 在 fork 时使用了<font color=red>写时拷贝技术</font>，但是如果数据庞大是还是比较耗性能</font>
+- <font color=green>虽然 Redis 在 fork 时使用了<font color=red>**写时拷贝技术**</font>，但是如果数据庞大是还是比较耗性能</font>
 - <font color=green>定期进行备份，如果 Redis 意外 down 掉的话，就会丢失最后一次快照后的所有修改。</font>
 
 
