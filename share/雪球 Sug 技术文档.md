@@ -207,7 +207,11 @@ class Trie:
 2. 召回：Trie 树的前缀查询
 3. 模型排序：特征组装集模型打分
 
-<img src="images/screenshot-20220701-170222.png" width="700px"/>
+
+
+<img src="/Users/dadao1/dadao/git/typora/images/WX20230214-221500@2x.png" style="zoom:67%;" />
+
+
 
 ### Trie 树的维护
 

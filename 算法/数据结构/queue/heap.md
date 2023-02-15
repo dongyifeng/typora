@@ -1,12 +1,140 @@
-文档在 算法/sort/
+[TOC]
+
+# 堆排序
+
+## 完全二叉树
+
+
+
+## 堆
+
+堆的定义：
+
+- 堆是一个完全二叉树
+- 堆中每一个节点的值都必须大于等于（或小于等于）其子树中每个节点的值。
+
+大顶堆：每个节点的值都**大于等于**其子树中每个节点值的堆。
+
+小顶堆：每个节点的值都**小于等于**其子树中每个节点值的堆。
+
+
+
+堆的存储：<font color=orange>**数组**</font>，完全二叉树据适合用数组存储。
+
+下标为 i 的节点：左子节点：2 * i，右子节点：2 * i + 1，父节点：i / 2
+
+
+
+堆的操作：
+
+- 插入一个元素
+- 堆化
+  - 从下往上
+  - 从上往下
+- 删除堆顶元素
+
+![堆的定义](/Users/dadao1/dadao/git/typora/算法/sort/images/20191130141239.jpg)
+
+第 1 个 和 第 2 个 是大顶堆，第 3 个是小顶堆，第 4 个不是堆。
+
+下标为 i 的结点：
+
+- 左子节点：2 * i
+- 右子节点：2 * i + 1
+- 父节点：$\frac{i}{2}$
+
+![子节点与父节点的关系](/Users/dadao1/dadao/git/typora/算法/sort/images/20191130141825.jpg)
+
+### 插入数据
+
+从下上向上堆化，时间复杂度：O(logn)，空间复杂度：O(1)
+
+
+
+![自下向上堆化](/Users/dadao1/dadao/git/typora/算法/sort/images/20191130143637.jpg)
 
 
 
 
+
+```python
+class Heap:
+    def __init__(self, capacity):
+        self.a = [None] * (capacity + 1)
+        self.n = capacity
+        self.count = 0
+
+    def insert(self, data):
+        # 堆满了
+        if self.count >= self.n: return
+        self.count += 1
+        self.a[self.count] = data
+        i = self.count
+        # 自下向上堆化
+        while i >> 1 > 0 and self.a[i] > self.a[i >> 1]:
+            self.a[i], self[i >> 1] = self[i >> 1], self[i]
+            i >>= 1
+```
+
+
+
+### 删除堆顶元素
+
+从下上向上堆化，时间复杂度：O(logn)，空间复杂度：O(1)
+
+删除堆顶元素时，如果使用自下向上堆化，那么就出现数据空洞现象。
+
+![](/Users/dadao1/dadao/git/typora/算法/sort/images/20191130144528.jpg)
+
+
+
+正确做法：==**将最后一个元素移动到堆顶。然后自上而下堆**化==。
+
+![自上而下堆化](/Users/dadao1/dadao/git/typora/算法/sort/images/20191130144735.jpg)
+
+
+
+```python
+    def removeMax(self):
+        if self.count == 0: return
+        self.a[1] = self.a[self.count]
+        self.count -= 1
+        self.heapify(1)
+
+    # 从上向下堆化
+    def heapify(self, i):
+        while True:
+            # 较大孩子替换父节点
+            # 左子树判断
+            if 2 * i < self.count and self.a[i] < self.a[i * 2]:
+                j = 2 * i
+            # 右子树判断
+            elif 2 * i + 1 < self.count and self.a[i] < self.a[2 * i + 1]:
+                j = 2 * i + 1
+            else:
+                break
+            self.a[i], self.a[j] = self.a[j], self.a[i]
+            i = j
+```
+
+
+
+## 堆排序
+
+步骤：
+
+1. 建堆
+2. 排序
+
+堆排序是时间复杂度：O(nlogn)：最好情况，最坏情况，平均情况的时间复杂度都是O(nlogn)
+
+堆排序是原地排序，空间复杂度O(1)
 
 ### 建堆
 
 #### 思路一
+
+
 
 借助堆插入的思路，假设期初堆中只有一个元素，将剩下的元素依次加入堆中。
 
@@ -23,13 +151,19 @@ def build_heap1(self, nums):
 
 
 
+这种思路是从前向后处理数据，从下向上堆化。
+
 #### 思路二
 
 从后向前处理数据，从上向下堆化。
 
-![](../../算法/sort/images/20191130154212.jpg)
+![](/Users/dadao1/dadao/git/typora/算法/sort/images/20191130154212.jpg)
 
-![](../../算法/sort/images/20191130154255.jpg)
+![](/Users/dadao1/dadao/git/typora/算法/sort/images/20191130154255.jpg)
+
+
+
+
 
 ```python
   # 时间复杂度 O(N)  
@@ -37,9 +171,11 @@ def build_heap1(self, nums):
         self.a = nums
         self.n = len(nums)
         self.count = len(nums)
-        for i in range(self.count >> 1, 0, -1):
+        for i in range(self.count >> 1, 0, -1·	):
             self.heapify(i)
 ```
+
+
 
 复杂度分析：
 
@@ -59,11 +195,28 @@ $2T(N)=N + \frac{N}{2}*2 + \frac{N}{4}*3 + \frac{n}{8}*4 + ... $
 
 $T(N)=2T(N)-T(N)=N+\frac{N}{2} + \frac{N}{4} + \frac{N}{2} + \frac{N}{8} + ... =N*(1+\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16}+...)=O(N)$
 
-
-
 ![](images/screenshot-20220713-165424.png)
 
 
+
+### 排序
+
+## 堆排序 VS 快排
+
+1. 堆排序访问数据方式没有快排友好。
+2. 对于同样的数据，在排序过程中，堆排序算法的数据交换次数要多于快速排序。
+
+
+
+```python
+def sort(arr):
+  build_heap2(arr)
+  k = len(arr)
+  while k > 1:
+    swap(arr,1,k)
+    k-=1
+    heapify(arr,k,1)
+```
 
 
 
@@ -76,8 +229,6 @@ $T(N)=2T(N)-T(N)=N+\frac{N}{2} + \frac{N}{4} + \frac{N}{2} + \frac{N}{8} + ... =
 
 
 加强堆
-
-
 
 ```java
 import java.util.ArrayList;
