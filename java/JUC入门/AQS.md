@@ -398,6 +398,8 @@ compareAndSetState 期望 state 是 0，设置为 1。此时设置成功。setEx
 
 ```
 
+
+
 至此节点B已经添加到得 CLH 队列中了，但是线程还没有阻塞。
 
 ```java
@@ -417,7 +419,9 @@ compareAndSetState 期望 state 是 0，设置为 1。此时设置成功。setEx
                     failed = false;
                     return interrupted;
                 }
-              	// 
+              	// 当获取(资源)失败后，检查并且更新结点状态
+              	// 循环第一轮：shouldParkAfterFailedAcquire(p, node) 返回 false
+              	// 循环第二轮：shouldParkAfterFailedAcquire(p, node) 返回 ture，进入 parkAndCheckInterrupt()
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
                     interrupted = true;
@@ -428,9 +432,14 @@ compareAndSetState 期望 state 是 0，设置为 1。此时设置成功。setEx
         }
     }
 
+		// 当获取(资源)失败后，检查并且更新结点状态
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+      	// 第一次调用：pred 为 head 节点，node 是 B 节点，此时 ws = 0（默认值）
+      	// 第二次调用：pred 为 head 节点，node 是 B 节点，此时 ws = -1（第一次修改）
         int ws = pred.waitStatus;
+      	
         if (ws == Node.SIGNAL)
+          	// 第二次调用：直接返回
             return true;
         if (ws > 0) {
             do {
@@ -438,26 +447,38 @@ compareAndSetState 期望 state 是 0，设置为 1。此时设置成功。setEx
             } while (pred.waitStatus > 0);
             pred.next = node;
         } else {
+          	// 第一次调用：ws = 0,走这个分支，将 pred 的 waitStatus 设置为 -1
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }
         return false;
     }
 
     private final boolean parkAndCheckInterrupt() {
+      	//阻塞线程
         LockSupport.park(this);
         return Thread.interrupted();
     }
+
+
+    // 表示线程获取锁的请求已经取消
+    static final int CANCELLED = 1;
+    // 表示线程已经准备好了，就等待资源释放
+    static final int SIGNAL = -1;
+    // 表示节点在等待队列中，节点线程等待唤醒。等待 condition 唤醒
+    static final int CONDITION = -2;
+    // 共享式同步状态获取将会无条件地传播下去，当前线程处在 SHARED 情况下，该字段才会使用。
+    static final int PROPAGATE = -3;
 ```
 
 
 
-<img src="/images/juc/WX20230221-201346@2x.png" style="zoom:50%;" />
+<img src="/images/juc/WX20230222-153613@2x.png" style="zoom:50%;" />
 
 **C 是第 3 顾客，受理窗口被 A 占用，只能去等候区等待，进入 AQS 队列，前边是 B**
 
 顾客 C 与顾客 B 过程类似，只是不需要创建链表的哨兵节点，直接将节点 C ，插入队尾。
 
-<img src="/images/juc/WX20230221-202526@2x.png" style="zoom:50%;" />
+<img src="/images/juc/WX20230222-153744@2x.png" style="zoom:50%;" />
 
 
 
@@ -465,7 +486,7 @@ compareAndSetState 期望 state 是 0，设置为 1。此时设置成功。setEx
 
 ## unLock 过程
 
-
+如下图：线程 A 已经释放资源的过程。
 
 ```java
     public void unlock() {
@@ -473,7 +494,9 @@ compareAndSetState 期望 state 是 0，设置为 1。此时设置成功。setEx
     }
 
     public final boolean release(int arg) {
+      	// 线程 A 尝试释放资源
         if (tryRelease(arg)) {
+          	// 线程 A 释放资源完毕后。等待列表头部节点（哨兵节点除外）最应该抢占资源
             Node h = head;
             if (h != null && h.waitStatus != 0)
                 unparkSuccessor(h);
@@ -483,45 +506,188 @@ compareAndSetState 期望 state 是 0，设置为 1。此时设置成功。setEx
     }
 
         protected final boolean tryRelease(int releases) {
+          	// getState() 获取的值为 1，releases = 1 则 c = 1 - 1 = 0
             int c = getState() - releases;
+          	// 正确性校验
             if (Thread.currentThread() != getExclusiveOwnerThread())
                 throw new IllegalMonitorStateException();
             boolean free = false;
             if (c == 0) {
+              	// 释放资源
                 free = true;
                 setExclusiveOwnerThread(null);
             }
+          	// 将 state 设置为 0
             setState(c);
+          	// 返回 true
             return free;
         }
 
+		// 唤醒
     private void unparkSuccessor(Node node) {
-        /*
-         * If status is negative (i.e., possibly needing signal) try
-         * to clear in anticipation of signalling.  It is OK if this
-         * fails or if status is changed by waiting thread.
-         */
+      	// node 为哨兵节点：waitStatus = -1
         int ws = node.waitStatus;
         if (ws < 0)
+          	// 将哨兵节点的 waitStatus 赋值为 0
             compareAndSetWaitStatus(node, ws, 0);
-
-        /*
-         * Thread to unpark is held in successor, which is normally
-         * just the next node.  But if cancelled or apparently null,
-         * traverse backwards from tail to find the actual
-         * non-cancelled successor.
-         */
+      
+      	// s 为节点 B，waitStatus = -1
         Node s = node.next;
-        if (s == null || s.waitStatus > 0) {
+        if (s == null || s.waitStatus > 0) {   // 此路不通
             s = null;
             for (Node t = tail; t != null && t != node; t = t.prev)
                 if (t.waitStatus <= 0)
                     s = t;
         }
         if (s != null)
+          	// 唤醒节点 B 的线程
             LockSupport.unpark(s.thread);
+    }
+
+
+    private final boolean parkAndCheckInterrupt() {
+        LockSupport.park(this); // 线程 B 被唤醒
+      	// 由于线程 B 被唤醒，Thread.interrupted() 为 false
+        return Thread.interrupted();
+    }
+
+    final boolean acquireQueued(final Node node, int arg) {
+        boolean failed = true;
+        try {
+            boolean interrupted = false;
+            for (;;) {
+               // 2. 节点 B 的前置节点为 head (哨兵节点)
+                final Node p = node.predecessor();
+              	// p == head，节点 B 去抢夺资源成功。在非公平锁是，节点 B 有可能抢夺失败
+                if (p == head && tryAcquire(arg)) {
+                  	// 下边代码是从等待队列中移除节点 B。策略：将节点 B 作为哨兵节点，移除 p（之前的哨兵节点）
+                    // 设置新的 head 为node（node 成为新的哨兵节点）
+                    setHead(node);
+                  	// 旧的哨兵节点断开链接，后续被垃圾回收
+                    p.next = null; // help GC
+                    failed = false;
+                  	// 返回 false
+                    return interrupted;
+                }
+              	// 1.线程 B 的 parkAndCheckInterrupt() 为 false，进入下次循环。
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                    parkAndCheckInterrupt())
+                    interrupted = true;
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+
+    public final void acquire(int arg) {
+      	// 节点 B 的 acquireQueued(addWaiter(Node.EXCLUSIVE), arg) 返回 false。此方法执行完毕。
+        if (!tryAcquire(arg) &&
+            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+            selfInterrupt();
     }
 ```
 
 
+
+如下图：线程 A 释放资源后的状态
+
+<img src="/images/juc/WX20230222-154210@2x.png" style="zoom:50%;" />
+
+
+
+如下图：线程 B 抢占资源后
+
+![](/images/juc/WX20230222-162436@2x.png)
+
+## 线程取消排队过程
+
+
+
+```java
+    final boolean acquireQueued(final Node node, int arg) {
+        boolean failed = true;
+        try {
+            boolean interrupted = false;
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {
+                    setHead(node);
+                    p.next = null; // help GC
+                    failed = false;
+                    return interrupted;
+                }
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                    parkAndCheckInterrupt())
+                    interrupted = true;
+            }
+        } finally {
+          	// 由于异常，线程走到此处
+            if (failed)
+              	// 此方法目的：将 node 节点从等待队列中移除。
+                cancelAcquire(node);
+        }
+    }
+
+    // 表示线程获取锁的请求已经取消
+    static final int CANCELLED = 1;
+    // 表示线程已经准备好了，就等待资源释放
+    static final int SIGNAL = -1;
+    // 表示节点在等待队列中，节点线程等待唤醒。等待 condition 唤醒
+    static final int CONDITION = -2;
+    // 共享式同步状态获取将会无条件地传播下去，当前线程处在 SHARED 情况下，该字段才会使用。
+    static final int PROPAGATE = -3;
+
+    private void cancelAcquire(Node node) {
+        if (node == null)
+            return;
+
+    		// 将线程置空
+        node.thread = null;
+      
+        Node pred = node.prev;
+      	// pred.waitStatus > 0 表示节点状态为：已取消。node 之前节点也可能是已取消状态，需要找到最前边的不取消的节点给 pred
+        while (pred.waitStatus > 0)
+            node.prev = pred = pred.prev;
+        Node predNext = pred.next;
+			
+        node.waitStatus = Node.CANCELLED;
+
+        // 如果 node 是 tail，需要特殊处理，直接将 pred 节点设置为 tail
+        if (node == tail && compareAndSetTail(node, pred)) {
+          	// pred.next = null
+            compareAndSetNext(pred, predNext, null);
+        } else {
+            int ws;
+            if (pred != head &&
+                ((ws = pred.waitStatus) == Node.SIGNAL ||
+                 (ws <= 0 && compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &&
+                pred.thread != null) {
+                Node next = node.next;
+              	// next.waitStatus <= 0：next 节点是非取消状态
+                if (next != null && next.waitStatus <= 0)
+                  	// pred.next = next
+                    compareAndSetNext(pred, predNext, next);
+            } else {
+              	// 唤醒 node
+                unparkSuccessor(node);
+            }
+
+            node.next = node; // help GC
+        }
+    }
+```
+
+线程取消排队的两种情况:
+
+1. 尾节点取消排队
+2. 中间节点取消排队
+
+注意：可能存在已经连续取消的节点，一并处理了。
+
+![](/images/juc/WX20230222-165926@2x.png)
+
+
+
+# 总结
 
