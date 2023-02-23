@@ -236,7 +236,17 @@ typora-root-url: ../../../typora
 
 1. oracle 数据库如何清理重复数据？
 
+   ```mysql
+   delete from table_name t1 
+   where t1.col1 in (select col1 from table_name group by col1 having count(*) > 1)
+   and t1.rowid in (select min(rowid) from table_name group by col1 having count(*) > 1);
+   ```
+
+   
+
 2. oracle的事务隔离级别都有哪些，和Mysql有什么区别，分别如何实现序列化？
+
+   
 
 3. 如何对 tcp服务器压力测试？
 
@@ -255,7 +265,24 @@ typora-root-url: ../../../typora
 
 
 1. 设计一个程序，完成 100000000 个随机数的排序？
+
+   1. 
+
 2. 字符串 “12345678”表示为asc16进制如何表示？
+
+   ```java
+   public static String toHexString(String s) {  
+         String str = "";  
+         for (int i = 0; i < s.length(); i++) {  
+          int ch = (int) s.charAt(i);  
+          String s4 = Integer.toHexString(ch);  
+          str = str + s4;  
+         }  
+         return str;  
+    } 
+   ```
+
+   
 
 
 
