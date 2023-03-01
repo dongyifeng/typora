@@ -31,13 +31,7 @@ Search 流程的主要步骤
 
 
 
-
-
-
-
-
-
-![](images/screenshot-20211122-205205.png)
+![](images/cmy9nu0n2g.png)
 
 1. 客户端发送 search 请求到 Node3（协调节点）
 2. Node 3 将请求转发到索引的每个主分片或者副分片
@@ -60,7 +54,7 @@ Search 流程的主要步骤
 
 ## Fetch 阶段
 
-![](images/screenshot-20211122-210023.png)
+![](images/o5p0jz1uhu.png)
 
 Fetch 阶段步骤：
 
