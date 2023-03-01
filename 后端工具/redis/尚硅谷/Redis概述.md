@@ -64,7 +64,7 @@ Redis 的高性能
 
  如果能合理使用位操作，能够<font color=red>提高内存使用率。</font>
 
-- Bitmaps 本身不是一种数据类型，实际上它就是字符串（value 类型是字符串），但是它可以对字符串的位进行操作。
+- Bitmaps 本身不是一种数据类型，实际上它就是<font color=red>字符串（value 类型是字符串）</font>，但是它可以对字符串的位进行操作。
 - Bitmaps 单独提供了一套命令，可以把 Bitmaps 想象成一个以位为单位的数组，数组的每个单元只能存储 0 和 1。
 
 ![](/images/redis/WX20230202-181425.png)
@@ -92,11 +92,13 @@ offset：偏移量从 0 开始
 
 ## HyperLogLog
 
-  HyperLogLog 用于处理基数问题。
+  HyperLogLog 用于处理<font color=red>**基数问题**</font>。
 
 基数：数据集 { 1,3,5,7,5,7,8 } 那么这个数据集的基数集为 { 1,3,5,7 ,8 }（没有重复元素），基数为 5。
 
-  HyperLogLog 使用场景
+
+
+  **HyperLogLog 使用场景**
 
 - 统计网站的 UV
 
@@ -104,11 +106,13 @@ HyperLogLog 只需要花费 12 KB 内存，就可以计算近 $2^{64}$ 个不同
 
 
 
-`pfadd <key> <element> [element...]`：添加指定元素到 HyperLogLog 中。如果添加成功返回 1，否则为 0。重复添加为 0
+**指令**
 
-`pfcount <key> [key...]`：<font color=red>计算 HLL 的近似基数</font>
+- `pfadd <key> <element> [element...]`：添加指定元素到 HyperLogLog 中。如果添加成功返回 1，否则为 0。重复添加为 0
 
-`pfmerge <destkey> <sourcekey>[sourcekye...]` 将一个或者多个 HLL 合并后的结果存储到另一个 HLL 中。例如每月的活跃用户可以使用每天的活跃用户来合并计算可得。
+- `pfcount <key> [key...]`：<font color=red>计算 HLL 的近似基数</font>
+
+- `pfmerge <destkey> <sourcekey>[sourcekye...]` 将一个或者多个 HLL 合并后的结果存储到另一个 HLL 中。例如每月的活跃用户可以使用每天的活跃用户来合并计算可得。
 
 
 
@@ -166,17 +170,17 @@ Redis 事务的主要作用就是<font color=red>串联多个命令</font><font 
 
 
 
-![](/images/redis/WX20230202-200437@2x.png)
+<img src="/images/redis/WX20230202-200437@2x.png" style="zoom:50%;" />
 
 
 
-在组队时有错误（语法错误），在执行时整个事务都会被执行。
+在组队时有错误（语法错误），在执行时整个事务都不会被执行。
 
-![](/images/redis/WX20230202-201540@2x.png)
+<img src="/images/redis/WX20230202-201540@2x.png" style="zoom:50%;" />
 
 在组队阶段没有错误，在执行阶段某个命令出错，不会影响其他命令的执行。Redis 事务不保证原子性，事务中如果有一条命令执行失败，其后的命令任然会被执行，没有回滚。
 
-![](/images/redis/WX20230202-201550@2x.png)
+<img src="/images/redis/WX20230202-201550@2x.png" style="zoom:50%;" />
 
 ## 加锁（watch）
 
@@ -326,7 +330,7 @@ CAP 原理就好比分布式领域的牛顿定律，它是分布式存储的理�
 
 在网络分区发生时，两个分布式节点之间无法进行通信，我们对一个节点进行的修改操作将无法同步到另外一个节点，所以数据的「**一致性**」将无法满足，因为两个分布式节点的数据不再保持一致。除非我们牺牲「**可用性**」，也就是暂停分布式节点服务，在网络分区发生时，不再提供修改数据的功能，直到网络状况完全恢复正常再继续对外提供服务。
 
-![](/images/redis/WX20230205-224917@2x.png)
+<img src="/images/redis/WX20230205-224917@2x.png" style="zoom:50%;" />
 
 一句话概括 CAP 原理就是——<font color=red>**网络分区发生时，一致性和可用性两难全**</font>。
 
@@ -342,7 +346,7 @@ Redis 保证「<font color=green>**最终一致性**</font>」，从节点会努
 
 ## 主从同步
 
-Redis 同步支持主从同步和从从同步，从从同步功能是 Redis 后续版本增加的功能，为了减轻主库的同步负担。后面为了描述上的方便，统一理解为主从同步。
+Redis 同步支持<font color=red>主从同步</font>和<font color=red>从从同步</font>，从从同步功能是 Redis 后续版本增加的功能，为了减轻主库的同步负担。后面为了描述上的方便，统一理解为主从同步。
 
 
 
