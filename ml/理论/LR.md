@@ -22,8 +22,6 @@ $股票热度 = \frac{log(股票热度)-log(min)}{log(max)-log(min)} $
 
 
 
-
-
 损失函数
 
 $ L(w) = -\sum^{n}_{i=0}{y_i*log( p(y_i=1|x_i,w) ) + (1-y_i)* log(p(y_i=0|x_i,w)) }$
