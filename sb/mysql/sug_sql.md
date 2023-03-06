@@ -1,4 +1,4 @@
-```mysql
+```sql
 Create Table
 CREATE TABLE `t_search_sugg` (
 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增长主键',

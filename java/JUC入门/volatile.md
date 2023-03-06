@@ -4,11 +4,11 @@ typora-root-url: ../../../typora
 
 [TOC]
 
-[volatile](https://so.csdn.net/so/search?q=volatile&spm=1001.2101.3001.7020)是Java提供的一种轻量级的同步机制。
+[volatile](https://so.csdn.net/so/search?q=volatile&spm=1001.2101.3001.7020)是 Java 提供的一种轻量级的同步机制。
 
 
 
-# [并发编程](https://so.csdn.net/so/search?q=并发编程&spm=1001.2101.3001.7020)的3个基本概念
+# 并发编程的3个基本概念
 
 - 原子性：即一个操作或者多个操作 要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行。
 - 可见性：指当多个线程访问同一个变量时，一个线程修改了这个变量的值，其他线程能够立即看得到修改的值。

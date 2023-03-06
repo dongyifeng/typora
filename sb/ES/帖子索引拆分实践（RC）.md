@@ -1,3 +1,7 @@
+---
+typora-root-url: ../../../typora
+---
+
 帖子索引拆分实践（RC）
 
 # 一、结论
@@ -16,7 +20,7 @@
 
 执行："GET status_v12_test"，得到如下图：
 
-![](/Users/dongyifeng/dongyf/git/typora/images/sb/33a8c645-1525-4a2e-9848-83a61cb51bd0.png)
+![](/images/sb/33a8c645-1525-4a2e-9848-83a61cb51bd0.png)
 
 #### 2、执行查询
 
@@ -143,7 +147,7 @@ GET status_v12_test/_search
 
 status_v12索引：
 
-![](/Users/dongyifeng/dongyf/git/typora/images/sb/4e29c8f2-5aa7-472c-8ec4-c95b83b0acda.png)
+![](/images/sb/4e29c8f2-5aa7-472c-8ec4-c95b83b0acda.png)
 
  
 
@@ -151,7 +155,7 @@ status_v12索引：
 
 status_v12_test索引：
 
-![](/Users/dongyifeng/dongyf/git/typora/images/sb/c39ca076-8feb-4cb9-a293-192dc6daec7e.png)
+![](/images/sb/c39ca076-8feb-4cb9-a293-192dc6daec7e.png)
 
 
 
@@ -159,13 +163,13 @@ status_v12_test索引：
 
  status_v12索引：
 
-![](/Users/dongyifeng/dongyf/git/typora/images/sb/9f6061e4-f625-4462-bc4a-75d7f8c22ae1.png)
+![](/images/sb/9f6061e4-f625-4462-bc4a-75d7f8c22ae1.png)
 
 
 
 status_v12_test索引：
 
-![](/Users/dongyifeng/dongyf/git/typora/images/sb/5c3bfacb-2325-42e6-ba74-0213fce74c75.png)
+![](/images/sb/5c3bfacb-2325-42e6-ba74-0213fce74c75.png)
 
 
 
@@ -803,11 +807,6 @@ public static void request(RestHighLevelClient restHighLevelClient, String index
         latencyList.add(elapsed);
 
     }
-
-
-
-
-
 }
 ```
 

@@ -1,7 +1,3 @@
-
-
-
-
 ```sql
 CREATE TABLE `promotion_info` (
 `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -84,13 +80,13 @@ PRIMARY KEY (`id`)
 
 
 
-
-
-```mysql
+```sql
 ads_info,ads_instance,ads_material,ads_position_statistics,ads_schedule,ads_statistics,ads_target,ads_test_user,ads_whitelist_user,feature_dict,user_profile
 ```
 
-```mysql
+
+
+```sql
 CREATE TABLE `ads_info` (
 `id` bigint(20) NOT NULL AUTO_INCREMENT,
 `category` varchar(64) DEFAULT NULL,

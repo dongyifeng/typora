@@ -25,7 +25,7 @@ Search 流程的主要步骤
 
 一个搜索请求必须询问索引的所有分片的某个副本来进行匹配。每个分片在本地执行搜索并构建一个匹配文档的优先级队列。
 
-优先级队列时一个存有 TopN 匹配文档的有序列表。优先级队列大小为分页参数：from + size
+优先级队列时一个存有 Top N 匹配文档的有序列表。优先级队列大小为分页参数：from + size
 
 比如：一个索引有 5 个主分片，每个主分片有 1 个副分片，共 10 个分片，一次搜索会请求 5 个分片来共同完成。它们可能是主分片，也可能是副分片。
 
@@ -49,6 +49,36 @@ Search 流程的主要步骤
 **详细步骤**
 
 ![](images/screenshot-20211121-204742.png)
+
+
+
+# ES 深度翻页
+
+ES 官方文档的解释：对于深度翻页，ES 的每个 shard 都会查询 Top N（N = from + size）的结果，并且每个 shard 会将这 N 条数据传给协调节点，那么协调对 N * 分片数 条数据，进行排序后，获取 【 from, from + size 】 的数据。
+
+问题来了：明明只需要返回 【 from, from + size 】 ，为什么每个 shard 偏要将 【 0 ,from】 的结果都查出来，并且传给协调节点？
+
+首先看一个简单的例子。如下图：假设有 3 个 shard，每个 shard 都是按 value 逆序。from = 2 ；size = 3。那么按照 ES 文档的处理逻辑，每个 shard 都会返回  【0 , 5】的文档，协调节点上将收到 15 条数据，对这 15 条数据按 value 逆序后，取 【2，5】的文档为最终结果。
+
+
+
+<img src="/Users/dadao1/dadao/git/typora/images/es/WX20230304-194926@2x.png" style="zoom:50%;" />
+
+那么如果按照每个shard 只返回 【2,5】的文档，我们看看结果又如何？
+
+如下图：每个 shard 只返回 【2,5】的文档，结果明显不正确。原因：<font color=red>每个 shard 并不知道全局的排序结果。</font>
+
+
+
+<img src="/Users/dadao1/dadao/git/typora/images/es/WX20230304-194939@2x.png" style="zoom:50%;" />
+
+
+
+如下图：需求是检索热度最高的 Top 500 的帖子。这个需求不是翻页需求。是 Top N需求，每个节点，只需要返回 Top N，在协调节点排序在去 N 即可。
+
+<img src="/Users/dadao1/dadao/git/typora/images/es/WX20230304-171044@2x.png" style="zoom:33%;" />
+
+
 
 
 
@@ -77,6 +107,18 @@ Fetch 阶段步骤：
 **详细步骤**
 
 ![](images/screenshot-20211121-204843.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 小结
 
