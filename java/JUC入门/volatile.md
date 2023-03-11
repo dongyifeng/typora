@@ -26,12 +26,12 @@ typora-root-url: ../../../typora
 
 
 
-# volatile变量的特性
+# volatile 变量的特性
 
 ## 保证可见性，不保证原子性
 
-1. 当写一个volatile变量时，JMM会把该线程本地内存中的变量强制刷新到主内存中去；
-2. 这个写会操作会导致其他线程中的volatile变量缓存无效。
+1. 当写一个 volatile 变量时，JMM 会把该线程本地内存中的变量强制刷新到主内存中去；
+2. 这个写会操作会导致其他线程中的 volatile 变量缓存无效。
 
 
 
@@ -60,7 +60,16 @@ typora-root-url: ../../../typora
 ```java
 public class TestInstance{
   private volatile static TestInstance instance;
-  public static TestInstance getInstance(){        //1if(instance == null){                        //2synchronized(TestInstance.class){        //3if(instance == null){                //4instance = new TestInstance();   //5}}}return instance;                             //6}}
+  public static TestInstance getInstance(){        
+    //1 if(instance == null){                        
+    			//2 synchronized(TestInstance.class){        
+    						//3	if(instance == null){                
+    									//	4	instance = new TestInstance();   
+    //5}
+  }
+}return instance;                             
+//6}
+}
 ```
 
 

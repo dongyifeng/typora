@@ -62,7 +62,9 @@ Redis 的高性能
 
 ## Bitmaps
 
- 如果能合理使用位操作，能够<font color=red>提高内存使用率。</font>
+ Bitmaps：
+
+如果能合理使用位操作，能够<font color=red>提高内存使用率。</font>
 
 - Bitmaps 本身不是一种数据类型，实际上它就是<font color=red>字符串（value 类型是字符串）</font>，但是它可以对字符串的位进行操作。
 - Bitmaps 单独提供了一套命令，可以把 Bitmaps 想象成一个以位为单位的数组，数组的每个单元只能存储 0 和 1。

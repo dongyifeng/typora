@@ -37,7 +37,7 @@ CAS（compare and swap）<font color=red>比较并交换</font>，实现并发�
 
 **CAS** 
 
-<img src="/images/juc/WX20230302-223239@2x.png" style="zoom:50%;" />
+<img src="/images/juc/WX20230302-223239@2x.png" style="zoom:30%;" />
 
 
 
