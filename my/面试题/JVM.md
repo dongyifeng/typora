@@ -128,7 +128,7 @@ Eden 空间和另外两个 Survivor 空间缺省占比的比例是：8:1:1
 - <font color=green>**标记：**</font> Collector 从引用根节点开始遍历，<font color=red>标记所有被引用的对象</font>。一般是在对象的 Header 中记录为可达对象。
 - <font color=green>**清除：**</font>Collector 对堆内存从头到尾进行线性的遍历，如果发现某个对象在其 Header 中没有标记为可达对象，则将其回收。
 
-<img src="/images/java/WX20221229-153121@2x.png" style="zoom:20%;" />
+<img src="/images/java/WX20221229-153121@2x.png" style="zoom:20%;" /
 
 **缺点**
 

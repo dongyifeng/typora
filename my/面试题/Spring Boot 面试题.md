@@ -6,7 +6,7 @@ typora-root-url: ../../../typora
 
 
 
-## Spring Boot启动流程
+## Spring Boot 启动流程
 
 - 首先从 main 找到 run() 方法，在执行 run() 方法之前 new 一个 SpringApplication 对象
 - 进入run() 方法，创建应用监听器 SpringApplicationRunListeners 开始监听
@@ -22,7 +22,7 @@ typora-root-url: ../../../typora
 
 
 
-# 如何理解 Spring Boot中的 Starter？
+# Spring Boot Starter是如何产生的？
 
 Starter 组件的核心功能
 

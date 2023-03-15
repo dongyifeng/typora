@@ -105,9 +105,9 @@ volatile 关键词有两个作用
 
 可见性：当一个线程对于共享变量的修改，其他线程立刻看到修改后的一个值。
 
-造成可见性的原因：CPU 为了执行效率，设计了三级缓存，这就带来了缓存一致性问题。在多线程环境下，缓存一致性的问题就会导致可见性的问题。
+造成可见性的原因：CPU 为了执行效率，设计了三级缓存，这就带来了缓存一致性问题。在多线程环境下，<font color=green>缓存一致性</font>的问题就会导致可见性的问题。
 
-可见性的底层原理：对于 volatile 修改是变量，JVM 自会自动增加一个 lock 汇编指令，这个指令会根据不同 CPU 型号，去自动添加总线锁或者缓存锁。
+可见性的<font color=green>**底层原理**</font>：对于 volatile 修改是变量，JVM 自会自动增加一个 <font color=green>lock 汇编指令</font>，这个指令会根据不同 CPU 型号，去自动添加总线锁或者缓存锁。
 
 总线锁：锁定的是 CPU 的前段总线。从而导致同一时空只能有一个线程和内存通信，这样就避免了多线程并发造成的可见性问题。
 
@@ -143,6 +143,88 @@ JDK 5 开始，JVM 就使用了一种 Happens-before 的模型去描述，多线
 2. 重排序是为了优化性能，但是不管怎么重排序，单线程下程序的执行结果不能被改变
 
 
+
+
+
+# Sychronized 和 ReentrantLock 的区别？
+
+| Sychronized                      | ReentrantLock                       |
+| -------------------------------- | ----------------------------------- |
+| Java 中的关键字                  | JDK 提供的一个类                    |
+| 自动加锁与释放锁                 | 需要手动加锁和释放锁                |
+| JVM层面的锁                      | API 层面的锁                        |
+| 非公平锁                         | 公平锁或非公平锁                    |
+| 锁的是对象，锁信息保存在对象头中 | int 类型的 state 标识来标识锁的状态 |
+| 底层有锁升级过程                 | 没有锁升级过程                      |
+
+
+
+# ReentrantLock 的公平锁和非公平锁，底层如何实现的？
+
+首先不管是公平锁和非公平锁，它们底层实现都会使用<font color=red> AQS </font>来进行排队，它们的区别在于线程在使用 lock() 方法加锁时：
+
+1. 如果是<font color=red>公平锁</font>，会先检查 AQS 队列中是否存在线程在排序，如果有线程在排队，则当前线程也进行<font color=red>排队</font>。
+2. 如果是<font color=red>非公平锁</font>，则不会去检查是否有线程在排队，而是<font color=red>直接竞争锁</font>。
+
+
+
+# Sychronized 的锁升级过程是怎样的？
+
+偏向锁 --> 轻量级锁（自旋锁） -> 重量级锁  
+
+
+
+1. 偏向锁：在锁对象的对象头中记录一下，当前获取到该锁的线程 ID，改线程下次如果又来获取该锁就可以直接获取到了，也就是支持<font color=red>锁重入</font>
+2. 轻量级锁：由偏向锁升级而来，当一个线程获取到锁后，此时这把锁就是偏向锁，此时如果有第二线程来<font color=red>竞争</font>锁，偏向锁就会<font color=red>升级</font>为轻量级锁，轻量级锁是相对于重量级锁而言的，轻量级锁底层通过<font color=red>自旋</font>来实现的，并<font color=red>不会阻塞线程</font>。
+3. 如果<font color=red>自旋次数过多</font>，任然没有获取到锁，则会升级到<font color=red>重量级锁</font>，重量级锁<font color=red>会导致线程阻塞</font>。
+4. 自旋锁：自旋锁就是线程在获取锁的过程中，不会去阻塞线程，也就无所谓唤醒线程，<font color=red>阻塞和唤醒这两个步骤都是需要操作系统去进行的</font>，比较消耗时间，自旋锁是线程通过 CAS 获取预期的一个标记，如果没有获取到，则继续循环获取，如果获取到了则表示获取到了锁，这个过程线程一直在运行中，相对而言没有使用太多的操作系统资源，比较轻量。
+
+
+
+<font color=red>**锁消除**</font>
+
+<font color=red>锁消除</font>：<font color=red>即时编译器</font>（ JIT ）基于<font color=red>逃逸分析</font>，对那些不可能出现共享数据竞争的锁进行消除。
+
+比如：一个对象不会逃逸处方法，就没必要加锁。
+
+Java 程序很多同步措施不是程序员手动添加的。java 程序中出现的同步频繁程度，超出你的想象
+
+
+
+如代码：每个 <font color=red>StringBuffer.append()</font> 方法中都有一个<font color=red>同步块</font>，锁就是 sb 对象。虚拟机观察 sb 对象不会逃逸出方法，这里的所有 append 会忽略同步措施直接执行。
+
+```java
+// 原始代码
+public String concatString(String s1,String s2,String s3){
+  return s1 + s2 + s3;
+}
+
+// 编译器优化后的代码
+public String concatString(String s1,String s2,String s3){
+  StringBuffer sb = new StringBuffer();
+  sb.append(s1);
+  sb.append(s2);
+  sb.append(s3);
+  return sb.toString();
+}
+```
+
+
+
+<font color=red>**锁粗化**</font>
+
+一般情况下，我们系统同步块越小越好，这样等待锁的线程也尽可能快地拿到锁。
+
+但是如果对<font color=red>同一个对象反复加锁和解锁</font>，或者 StringBuffer 在循环体中 append()，即时没有线程竞争，频繁地加锁和释放锁也会导致<font color=red>不必要的性能损耗</font>。
+
+因此可以<font color=red>将锁的范围扩大（粗化）化</font>，在第一个  append 加锁一次就可以了，最后一次 append 执行完毕后，再释放锁。
+
+
+
+# ThreadLocal 有哪些应用场景？底层如何实现的？
+
+1. ThreadLocal 是 Java 中所提供的线程本地存储机制，可以利用该机制将数据<font color=red>缓存在某个线程内存</font>，该线程可以在任意时刻、任意方法中获取缓存的数据。
+2. ThreadLocal 底层是通过 ThreadLocalMap 来实现的，每个 Thread 对象中都存一个 ThreadLocalMap，Map 的 key 为 ThreadLocal 对象，Map 的 value 为需要缓存的值。
 
 
 
