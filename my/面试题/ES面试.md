@@ -63,6 +63,10 @@ typora-root-url: ../../../typora
 
 <font color=red>ES 指数衰减：</font>帖子创建时间，越新的帖子，分数越高。
 
+- 线性函数：它是条直线
+- exp 指数函数：<font color=red>它先剧烈衰减然后变的缓慢。</font>符合帖子特性，今天的帖子比昨天的帖子重要的多，昨天的帖子与前天或者大前天的天，差别不大。
+- guass 高斯函数：它的衰减速率是先缓慢，然后变快，最后有放缓。
+
 <font color=red>ES 聚合：</font> 统计是否是热门股票：根据这个股票下近期关联的帖子数。
 
 <font color=red>滚动查询</font>：股票代码变更，需要批量迁移帖子，将帖子迁移到新的 code 下。
@@ -391,5 +395,60 @@ PUT /my_index
 
 
 
-# ES 衰减函数
+# Term 和 Match 的区别？
 
+## term 和 match
+
+term：搜索时，对搜索词<font color=red>不分词</font>
+
+match：搜索时，对搜索词<font color=red>分词</font>
+
+
+
+## term 和 keyword
+
+Term：检索类型。
+
+Keyword：字段类型。
+
+
+
+# ES 支持哪些查询类型？
+
+按语言划分
+
+1. Query DSL：Domain Specific Language
+2. Script：脚本查询（可编程语言，灵活度高，性能不如 DSL）
+3. Aggregations：聚合查询
+4. SQL 查询
+5. EQL 查询
+
+按场景划分
+
+
+
+# ES 的开发模式和生产模式
+
+- 开发模式：ES 启动时，没有引导检查。方便学习者快速上手。
+- 生成模式：ES 启动时，有引导检查。避免一些不合理的配置，导致日后生产上更大的问题。
+
+引导项检查的检查项：
+
+- 堆的大小
+- 文件描述检查
+- 内存锁检查
+- 最大线程数检查
+- 最大文件大小检查
+
+等等
+
+
+
+# ES 模糊搜索
+
+Fuzzy query
+
+- 更改字符（box→fox）
+- 删除字符（black→lack）
+- 插入字符（sic→sick）
+- 转置两个相邻字符（act→cat）
