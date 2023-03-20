@@ -106,3 +106,32 @@ git commit
 git push -u origin master
 ```
 
+
+
+
+
+
+
+
+
+# SSK 失效
+
+```shell
+# 重新生成 ~/.ssh/id_rsa.pub
+ssh-keygen -t rsa -C "jff1314@126.com"
+
+ssh -v git@github.com
+
+ssh-agent -s
+
+ssh-add ~/.ssh/id_rsa
+
+# 将内容拷贝到 github.com 上
+cat ~/.ssh/id_rsa.pub
+
+
+
+ssh -T git@github.com
+
+```
+
